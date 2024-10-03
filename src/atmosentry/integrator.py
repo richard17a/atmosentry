@@ -51,7 +51,7 @@ def differential_equations(t: float,
 
     dMdt = - np.minimum(sigma * T**4, 0.5 * C_h * rho_a * v**3) * A / eta
 
-    if rho_a * v ** 2 > sigma_imp:
+    if 0.5 * C_d * rho_a * v ** 2 > sigma_imp:
         R_dot = Rdot
         R_ddot = C_d * rho_a * v ** 2 / (2 * rho_imp * R)
 
