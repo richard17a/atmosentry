@@ -180,7 +180,6 @@ def run(impactor: Meteoroid,
 
     # these events terminate the integration (i.e. when the comet's mass = 0, or the altitude = 0 etc.)
     events = [event_Z_crossing, event_mass_zero, event_dVdt_zero_rhoatm0, event_N_crit_with_Nc]
-    # events = [event_Z_crossing, event_mass_zero, event_N_crit_with_Nc]
 
     x0, y0, z0 = impactor.x, impactor.y, impactor.z
     vx0, vy0, vz0 = impactor.vx, impactor.vy, impactor.vz

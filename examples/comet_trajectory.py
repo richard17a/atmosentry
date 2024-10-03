@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import cmcrameri.cm as cm
 from atmosentry.meteoroid import Meteoroid
 from atmosentry import Simulation
+from chyba_model import run_intergration_chyba
 
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
 matplotlib.rcParams['font.family'] = 'STIXGeneral'
@@ -80,6 +81,9 @@ ax3 = axes['3']
 ax4 = axes['4']
 ax5 = axes['5']
 
+# how to save only this subplot?
+fig6, ax6 = plt.subplots(1, 1, figsize=(fig_width, fig_height))
+
 for i in range(len(R0)):
 
     M0 = rho_com * (4 * np.pi / 3) * (R0[i] ** 3)
@@ -106,8 +110,10 @@ for i in range(len(R0)):
     vel = np.sqrt(sim.impactor.vx ** 2 + sim.impactor.vy ** 2 + sim.impactor.vz ** 2)
 
     ax1.plot(vel / 1e3, sim.impactor.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=fr'$R_0=$ {R0[i]} m')
+    ax6.plot(vel / 1e3, sim.impactor.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=fr'$R_0=$ {R0[i]} m')
     if len(sim.fragments):
         ax1.plot(vel[-1] / 1e3, sim.impactor.z[-1] / 1e3, 'x', c='k')
+        ax6.plot(vel[-1] / 1e3, sim.impactor.z[-1] / 1e3, 'x', c='k')
 
         for fragment in sim.fragments:
 
@@ -115,6 +121,12 @@ for i in range(len(R0)):
 
             ax1.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), )
             ax1.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+            ax6.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), )
+            ax6.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+
+    _, vel_chyba, mass_chyba, _, altitude_chyba, _, _, _ =\
+            run_intergration_chyba(V0, M0, theta0, 100e3, R0[i], 0, 1e4, rho_com, 2.5e6)
+    ax6.plot(vel_chyba / 1e3, altitude_chyba / 1e3, color=cm.bamako((len(R0) - i - 0.5) / len(R0)), ls='--')
 
     if len(sim.fragments):
         fragments_surface = [fragment for fragment in sim.fragments if fragment.z[-1] < 1]
@@ -196,6 +208,8 @@ axs = [ax1, ax2, ax3, ax4, ax5]
 for p, l in zip(axs, ttt):
     p.annotate(l, xy=(-0., 1.04), xycoords="axes fraction", fontsize=10, weight='bold')
 
-# plt.savefig('comet_trajectory_gallery.pdf', bbox_inches='tight', format='pdf')
+plt.savefig('comet_trajectory_gallery.pdf', bbox_inches='tight', format='pdf')
+
+# ax6.savefig('chyba_comparison.pdf', bbox_inches='tight', format='pdf')
 
 plt.show()

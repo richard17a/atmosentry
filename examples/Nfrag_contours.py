@@ -56,17 +56,20 @@ rho_atm0 = 1.225
 theta0 = 45. * np.pi / 180.
 V0 = 20e3
 
-R0 = 150
+R0 = 1500
 M0 = rho_com * (4 * np.pi / 3) * (R0 ** 3)
 
-N_simulations = 5000
+KE0 = 0.5 * M0 * ((V0 / 1e3) ** 2)
 
-# Store the mean mass and weighted velocity for all simulations
+N_simulations = 500
+
 mean_masses2 = []
 weighted_vels2 = []
+tot_mass2 = []
+tot_KE2 = []
 
 for i in range(N_simulations):
-    # First simulation setup
+
     impactor = Meteoroid(x=0,
                          y=0,
                          z=100e3,
@@ -82,37 +85,32 @@ for i in range(N_simulations):
 
     sim = Simulation()
     sim.impactor = impactor
+    sim.Ch = 0.1
     sim.Nfrag = 2
     sim.integrate()
 
     masses = []
-    vels = []
+    KEs = []
 
-    # Gather fragment information from the simulation
     for fragment in sim.fragments:
         if fragment.z[-1] < 1:
             v = np.sqrt(fragment.vx[-1] ** 2 + fragment.vy[-1] ** 2 + fragment.vz[-1] ** 2) / 1e3
             masses.append(fragment.mass[-1])
-            vels.append(v)
+            KEs.append(0.5 * fragment.mass[-1] * (v ** 2))
 
-    masses = np.array(masses)
-    vels = np.array(vels)
-
-    # Calculate mean mass and weighted velocity
-    if len(masses) > 0:  # Avoid empty fragments
-        mean_mass = np.mean(masses)
-        weighted_vel = np.average(vels, weights=masses)
-
-        # Store results for the corner plot
-        mean_masses2.append(mean_mass)
-        weighted_vels2.append(weighted_vel)
-
+            mean_masses2 = np.append(mean_masses2, fragment.mass[-1])
+            weighted_vels2 = np.append(weighted_vels2, v)
+    
+    tot_mass2 = np.append(tot_mass2, np.sum(masses))
+    tot_KE2 = np.append(tot_KE2, np.sum(KEs))
 
 mean_masses3= []
 weighted_vels3 = []
+tot_mass3 = []
+tot_KE3 = []
 
 for i in range(N_simulations):
-    # First simulation setup
+
     impactor = Meteoroid(x=0,
                          y=0,
                          z=100e3,
@@ -128,30 +126,65 @@ for i in range(N_simulations):
 
     sim = Simulation()
     sim.impactor = impactor
+    sim.Ch = 0.1
     sim.Nfrag = 3
     sim.integrate()
 
     masses = []
-    vels = []
+    KEs = []
 
-    # Gather fragment information from the simulation
     for fragment in sim.fragments:
         if fragment.z[-1] < 1:
             v = np.sqrt(fragment.vx[-1] ** 2 + fragment.vy[-1] ** 2 + fragment.vz[-1] ** 2) / 1e3
             masses.append(fragment.mass[-1])
-            vels.append(v)
+            KEs.append(0.5 * fragment.mass[-1] * (v ** 2))
 
-    masses = np.array(masses)
-    vels = np.array(vels)
+            mean_masses3 = np.append(mean_masses3, fragment.mass[-1])
+            weighted_vels3 = np.append(weighted_vels3, v)
+    
+    tot_mass3 = np.append(tot_mass3, np.sum(masses))
+    tot_KE3 = np.append(tot_KE3, np.sum(KEs))
 
-    # Calculate mean mass and weighted velocity
-    if len(masses) > 0:  # Avoid empty fragments
-        mean_mass = np.mean(masses)
-        weighted_vel = np.average(vels, weights=masses)
+mean_masses4= []
+weighted_vels4 = []
+tot_mass4 = []
+tot_KE4 = []
 
-        # Store results for the corner plot
-        mean_masses3.append(mean_mass)
-        weighted_vels3.append(weighted_vel)
+for i in range(N_simulations):
+
+    impactor = Meteoroid(x=0,
+                         y=0,
+                         z=100e3,
+                         vx=-V0 * np.cos(theta0),
+                         vy=0,
+                         vz=-V0 * np.sin(theta0),
+                         theta=theta0,
+                         radius=R0,
+                         mass=M0,
+                         sigma=1e4,
+                         rho=0.6e3,
+                         eta=2.5e6)
+
+    sim = Simulation()
+    sim.impactor = impactor
+    sim.Ch = 0.1
+    sim.Nfrag = 4
+    sim.integrate()
+
+    masses = []
+    KEs = []
+
+    for fragment in sim.fragments:
+        if fragment.z[-1] < 1:
+            v = np.sqrt(fragment.vx[-1] ** 2 + fragment.vy[-1] ** 2 + fragment.vz[-1] ** 2) / 1e3
+            masses.append(fragment.mass[-1])
+            KEs.append(0.5 * fragment.mass[-1] * (v ** 2))
+
+            mean_masses4 = np.append(mean_masses4, fragment.mass[-1])
+            weighted_vels4 = np.append(weighted_vels4, v)
+    
+    tot_mass4 = np.append(tot_mass4, np.sum(masses))
+    tot_KE4 = np.append(tot_KE4, np.sum(KEs))
 
 
 mean_masses2 = np.array(mean_masses2)
@@ -160,22 +193,60 @@ weighted_vels2 = np.array(weighted_vels2)
 mean_masses3 = np.array(mean_masses3)
 weighted_vels3 = np.array(weighted_vels3)
 
+mean_masses4 = np.array(mean_masses4)
+weighted_vels4 = np.array(weighted_vels4)
+
 data2 = np.vstack([mean_masses2 / M0, weighted_vels2]).T
 data3 = np.vstack([mean_masses3 / M0, weighted_vels3]).T
+data4 = np.vstack([mean_masses4 / M0, weighted_vels4]).T
 
-figure = corner.corner(data2, labels=["Mass", "Velocity"],
-                       color='tab:blue', show_titles=True, title_fmt=".3f", quantiles=[0.16, 0.5, 0.84])
+
+tot_data2 = np.vstack([tot_mass2 / M0, tot_KE2 / KE0]).T
+tot_data3 = np.vstack([tot_mass3 / M0, tot_KE3 / KE0]).T
+tot_data4 = np.vstack([tot_mass4 / M0, tot_KE4 / KE0]).T
+
+figure1 = corner.corner(data2, labels=["Mass", "Velocity"],
+                       color='tab:blue', show_titles=False, title_fmt=".3f", )
 
 corner.corner(data3, labels=["Mass", "Velocity"],
-              show_titles=True, title_fmt=".3f", quantiles=[0.16, 0.5, 0.84],
+              show_titles=False, title_fmt=".3f",
               color='tab:orange', plot_datapoints=False, fill_contours=True,
-              fig=figure) 
+              fig=figure1) 
 
-axes = np.array(figure.axes).reshape((2, 2))
+corner.corner(data4, labels=["Mass", "Velocity"],
+              show_titles=False, title_fmt=".3f",
+              color='tab:green', plot_datapoints=False, fill_contours=True,
+              fig=figure1) 
+
+axes = np.array(figure1.axes).reshape((2, 2))
 
 axes[0, 0].set_xlim(0, 1)
 axes[1, 0].set_xlim(0, 1)
 axes[1, 0].set_ylim(10, 20)
 axes[1, 1].set_xlim(10, 20)
+
+plt.minorticks_on()
+
+figure2 = corner.corner(tot_data2, labels=["Mass", "KE"],
+                       color='tab:blue', show_titles=False, title_fmt=".3f", )
+
+corner.corner(tot_data3, labels=["Mass", "KE"],
+              show_titles=False, title_fmt=".3f",
+              color='tab:orange', plot_datapoints=False, fill_contours=True,
+              fig=figure2) 
+
+corner.corner(tot_data4, labels=["Mass", "KE"],
+              show_titles=False, title_fmt=".3f",
+              color='tab:green', plot_datapoints=False, fill_contours=True,
+              fig=figure2) 
+
+axes = np.array(figure2.axes).reshape((2, 2))
+
+axes[0, 0].set_xlim(0, 1)
+axes[1, 0].set_xlim(0, 1)
+axes[1, 0].set_ylim(0, 1)
+axes[1, 1].set_xlim(0, 1)
+
+plt.minorticks_on()
 
 plt.show()

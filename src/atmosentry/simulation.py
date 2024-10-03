@@ -27,7 +27,8 @@ class Simulation():
                  H=7.2e3,
                  alpha=0.25,
                  beta=0.5,
-                 Nfrag=2
+                 Nfrag=2,
+                 fragments_track=True
                  ):
         
         self.t = t
@@ -42,6 +43,7 @@ class Simulation():
         self.alpha = alpha
         self.beta = beta
         self.Nfrag = Nfrag
+        self.fragments_track = fragments_track
 
     @property
     def t(self):
@@ -255,6 +257,32 @@ class Simulation():
             self._H = H
 
     @property
+    def fragments_track(self):
+        """
+        Docstring
+
+        Returns:
+            fragments_track: ADD DESCRIPTION
+        """
+        return self._fragments_track
+
+    @fragments_track.setter
+    def fragments_track(self, fragments_track):
+        """
+        Docstring
+
+        Args:
+            fragments_track (float): ADD DESCRIPTION
+
+        Raises:
+            TypeError: ADD DESCRIPTION
+        """
+        if not isinstance(fragments_track, bool):
+            raise TypeError("Fragment tracking must be a bool.")
+        if isinstance(fragments_track, bool):
+            self._fragments_track = fragments_track
+
+    @property
     def rho0(self):
         """
         Docstring
@@ -343,54 +371,55 @@ class Simulation():
         self._t = t
         self.update_meteoroid(self._impactor, mass, theta, radius, dM, dEkin, x, y, z, vx, vy, vz)
 
-        if self._impactor.z[-1] > 1:
+        if self._fragments_track:
+            if self._impactor.z[-1] > 1:
 
-            child_fragments = generate_fragments(self._impactor, self.rho0, self.H, self.alpha, self.beta, self.Nfrag)
-            
-            while len(child_fragments) > 0:
-                fragments_tmp = []
-
-                for fragment in child_fragments:
-                    print(f'R_0={self._impactor.radius[0]}m, N_frags={len(child_fragments)}', end='\r', flush=True)
-
-                    _, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f =\
-                        run(fragment,
-                            self._Cd,
-                            self._Ch,
-                            self._Cl,
-                            self._Rpl,
-                            self._Mpl,
-                            self._rho0,
-                            self._H,
-                            N_c=2.
-                        )
-                    self.update_meteoroid(fragment, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f)
-                    
-                    if z_f[-1] < 1:
-                        self._fragments = np.append(self._fragments, fragment)
-                    elif mass_f[-1] < 0.005 * self._impactor.mass[0]:
-                        mass_f = np.append(mass_f, mass_f[-1])
-                        theta_f = np.append(theta_f, theta_f[-1])
-                        radius_f = np.append(radius_f, radius_f[-1])
-                        x_f = np.append(x_f, x_f[-1])
-                        y_f = np.append(y_f, y_f[-1])
-                        z_f = np.append(z_f, z_f[-1])
-                        vx_f = np.append(vx_f, vx_f[-1])
-                        vy_f = np.append(vy_f, vy_f[-1])
-                        vz_f = np.append(vz_f, vz_f[-1])
-
-                        vel = vx_f[-1] ** 2 + vy_f[-1] ** 2 + vz_f[-1] ** 2
-
-                        dM_f = np.append(dM_f, mass_f[-1])
-                        dEkin_f = np.append(dEkin_f, 0.5 * mass_f[-1] * vel)
-
-                        self.update_meteoroid(fragment, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f)
-                        self._fragments = np.append(self._fragments, fragment)
-                        # OK - not perfect. need to include checks somewhere to stop negative masses being created...
-
-                    else:
-                        self._fragments = np.append(self._fragments, fragment)
-                        child_frags = generate_fragments(fragment, self.rho0, self.H, self.alpha, self.beta, self.Nfrag)
-                        fragments_tmp = np.append(fragments_tmp, child_frags)
+                child_fragments = generate_fragments(self._impactor, self.rho0, self.H, self.alpha, self.beta, self.Nfrag)
                 
-                child_fragments = fragments_tmp
+                while len(child_fragments) > 0:
+                    fragments_tmp = []
+
+                    for fragment in child_fragments:
+                        print(f'R_0={self._impactor.radius[0]}m, N_frags={len(child_fragments)}', end='\r', flush=True)
+
+                        _, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f =\
+                            run(fragment,
+                                self._Cd,
+                                self._Ch,
+                                self._Cl,
+                                self._Rpl,
+                                self._Mpl,
+                                self._rho0,
+                                self._H,
+                                N_c=2.
+                            )
+                        self.update_meteoroid(fragment, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f)
+                        
+                        if z_f[-1] < 1:
+                            self._fragments = np.append(self._fragments, fragment)
+                        elif mass_f[-1] < 0.005 * self._impactor.mass[0]:
+                            mass_f = np.append(mass_f, mass_f[-1])
+                            theta_f = np.append(theta_f, theta_f[-1])
+                            radius_f = np.append(radius_f, radius_f[-1])
+                            x_f = np.append(x_f, x_f[-1])
+                            y_f = np.append(y_f, y_f[-1])
+                            z_f = np.append(z_f, z_f[-1])
+                            vx_f = np.append(vx_f, vx_f[-1])
+                            vy_f = np.append(vy_f, vy_f[-1])
+                            vz_f = np.append(vz_f, vz_f[-1])
+
+                            vel = vx_f[-1] ** 2 + vy_f[-1] ** 2 + vz_f[-1] ** 2
+
+                            dM_f = np.append(dM_f, mass_f[-1])
+                            dEkin_f = np.append(dEkin_f, 0.5 * mass_f[-1] * vel)
+
+                            self.update_meteoroid(fragment, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f)
+                            self._fragments = np.append(self._fragments, fragment)
+                            # OK - not perfect. need to include checks somewhere to stop negative masses being created...
+
+                        else:
+                            self._fragments = np.append(self._fragments, fragment)
+                            child_frags = generate_fragments(fragment, self.rho0, self.H, self.alpha, self.beta, self.Nfrag)
+                            fragments_tmp = np.append(fragments_tmp, child_frags)
+                    
+                    child_fragments = fragments_tmp
