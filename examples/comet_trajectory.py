@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 import cmcrameri.cm as cm
 from atmosentry.meteoroid import Meteoroid
 from atmosentry import Simulation
@@ -81,7 +82,6 @@ ax3 = axes['3']
 ax4 = axes['4']
 ax5 = axes['5']
 
-# how to save only this subplot?
 fig6, ax6 = plt.subplots(1, 1, figsize=(fig_width, fig_height))
 
 for i in range(len(R0)):
@@ -113,7 +113,7 @@ for i in range(len(R0)):
     ax6.plot(vel / 1e3, sim.impactor.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=fr'$R_0=$ {R0[i]} m')
     if len(sim.fragments):
         ax1.plot(vel[-1] / 1e3, sim.impactor.z[-1] / 1e3, 'x', c='k')
-        ax6.plot(vel[-1] / 1e3, sim.impactor.z[-1] / 1e3, 'x', c='k')
+        ax6.plot(vel[-1] / 1e3, sim.impactor.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
         for fragment in sim.fragments:
 
@@ -121,7 +121,7 @@ for i in range(len(R0)):
 
             ax1.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), )
             ax1.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
-            ax6.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), )
+            ax6.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), alpha=0.5)
             ax6.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
     _, vel_chyba, mass_chyba, _, altitude_chyba, _, _, _ =\
@@ -173,7 +173,7 @@ ax1.set_ylim(0, 60)
 ax1.set_xlabel(r'Velocity [km/s]', fontsize=13)
 ax1.set_ylabel(r'Altitude [km]', fontsize=13)
 ax1.minorticks_on()
-ax1.legend(frameon=False)
+ax1.legend(frameon=False, loc='upper left')
 
 ax2.axhline(20, c='tab:gray', ls='--', zorder=0, alpha=0.5)
 ax2.axvline(1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
@@ -201,15 +201,25 @@ ax5.set_xlabel(r'Cumulative energy deposition [J]', fontsize=13)
 ax5.set_ylabel('Altitude [km]', fontsize=13)
 ax5.minorticks_on()
 
-plt.tight_layout()
+ax6.minorticks_on()
+ax6.set_ylim(0, 60)
+ax6.set_xlabel(r'Velocity [km/s]', fontsize=13)
+ax6.set_ylabel(r'Altitude [km]', fontsize=13)
+
+
+fig.tight_layout()
+fig6.tight_layout()
 
 ttt = ['a', 'b', 'c', 'd', 'e']
 axs = [ax1, ax2, ax3, ax4, ax5]
 for p, l in zip(axs, ttt):
     p.annotate(l, xy=(-0., 1.04), xycoords="axes fraction", fontsize=10, weight='bold')
 
-plt.savefig('comet_trajectory_gallery.pdf', bbox_inches='tight', format='pdf')
+with PdfPages('comet_trajectory_gallery.pdf') as pdf:
+    pdf.savefig(fig, bbox_inches='tight', )
 
-# ax6.savefig('chyba_comparison.pdf', bbox_inches='tight', format='pdf')
+
+with PdfPages('chyba_comparison.pdf') as pdf:
+    pdf.savefig(fig6, bbox_inches='tight', )
 
 plt.show()
