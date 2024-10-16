@@ -49,52 +49,6 @@ def set_size(width, fraction=1, subplots=(1, 1)):
 
 fig_width, fig_height = set_size('thesis')
 
-# rho_com = 0.6e3
-# rho_atm0 = 1.225
-
-# theta0 = 45. * np.pi / 180.
-# V0 = 20e3
-
-# R0 = np.logspace(1, 4, 5)
-
-# final_mass = []
-# for i in range(len(R0)):
-
-#     M0 = rho_com * (4 * np.pi / 3) * (R0[i] ** 3)
-
-#     impactor = Meteoroid(x=0,
-#                         y=0,
-#                         z=100e3,
-#                         vx=-V0 * np.cos(theta0),
-#                         vy=0,
-#                         vz=-V0 * np.sin(theta0),
-#                         theta=theta0,
-#                         radius=R0[i],
-#                         mass=M0,
-#                         sigma=1e4,
-#                         rho=0.6e3,
-#                         eta=2.5e6)
-
-#     sim = Simulation()
-
-#     sim.impactor = impactor
-
-#     sim.integrate()
-
-#     if len(sim.fragments):
-
-#         frag_mass = 0
-#         for fragment in sim.fragments:
-
-#             if fragment.z[-1] < 1:
-#                 frag_mass += fragment.mass[-1]
-
-#         final_mass = np.append(final_mass, 1 - frag_mass / M0)
-            
-#     else:
-        
-#         final_mass = np.append(final_mass, 1 - impactor.mass[-1] / M0)
-
 
 def simulate_mass_loss(R0, rho_com, V0, theta0):
 
@@ -110,7 +64,7 @@ def simulate_mass_loss(R0, rho_com, V0, theta0):
                          radius=R0,
                          mass=M0,
                          sigma=1e4,
-                         rho=0.6e3,
+                         rho=rho_com,
                          eta=2.5e6)
 
     sim = Simulation()
@@ -125,10 +79,23 @@ def simulate_mass_loss(R0, rho_com, V0, theta0):
         return 1 - impactor.mass[-1] / M0
 
 
+def simulate_mass_loss_for_velocities(R0, rho_com, V0, theta0):
+
+    results = []
+    for vel in V0:
+        results.append(simulate_mass_loss(R0, rho_com, vel, theta0))
+
+    return results
+
+
 def parallel_simulation(R0, rho_com, V0, theta0):
 
     pool = mp.Pool(mp.cpu_count())
-    results = pool.starmap(simulate_mass_loss, [(rad / 2, rho_com, V0, theta0) for rad in R0])
+    
+    tasks = [(rad / 2, rho_com, V0, theta0) for rad in R0]
+    
+    results = pool.starmap(simulate_mass_loss_for_velocities, tasks)
+    
     pool.close()
     pool.join()
 
@@ -137,24 +104,38 @@ def parallel_simulation(R0, rho_com, V0, theta0):
 
 if __name__ == "__main__":
 
-    R0 = np.logspace(0, 4, 10)
+    R0 = np.logspace(1, 4, 25)
+    vels = [15e3, 20e3, 25e3]
 
     rho_com = 0.6e3
-    V0 = 20e3
     theta0 = 45 * np.pi / 180
-    
-    # eventually want to do this for V0 = 10, 15, 20 km/s. If this can also be run over lots of processors, this would be very nice :)
-    final_mass = parallel_simulation(R0, rho_com, V0, theta0)
+
+    results = parallel_simulation(R0, rho_com, vels, theta0)
+
+    final_mass15 = results[:, 0]
+    final_mass20 = results[:, 1]
+    final_mass25 = results[:, 2]
 
     _ = plt.figure(figsize=(fig_width, fig_height))
 
-    plt.plot(R0 / 1e3, 100 * final_mass, c=cm.bamako(0.3))
+    plt.plot(R0 / 1e3, 100 * final_mass15, c=cm.bamako(0.2), marker='.', label=r'$v_0 = 15\,{\rm km\,s}^{-1}$')
+    plt.plot(R0 / 1e3, 100 * final_mass20, c=cm.bamako(0.5), marker='.', label=r'$v_0 = 20\,{\rm km\,s}^{-1}$')
+    plt.plot(R0 / 1e3, 100 * final_mass25, c=cm.bamako(0.8), marker='.', label=r'$v_0 = 25\,{\rm km\,s}^{-1}$')
 
     plt.xlabel('Diameter [km]', fontsize=13)
     plt.ylabel('Fraction mass ablated [%]', fontsize=13)
 
+    plt.xlim(1e-2, 1e1)
+    plt.ylim(0, 100)
+
     plt.xscale('log')
 
+    plt.xticks([1e-2, 1e-1, 1e0, 1e1], labels=[0.01, 0.1, 1, 10])
+
     plt.minorticks_on()
+
+    plt.legend(frameon=False)
+
+    plt.savefig('fraction_ablated.pdf', bbox_inches='tight', format='pdf')
 
     plt.show()
