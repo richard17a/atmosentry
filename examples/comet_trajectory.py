@@ -120,9 +120,10 @@ for i in range(len(R0)):
             vel = np.sqrt(fragment.vx ** 2 + fragment.vy ** 2 + fragment.vz ** 2)
 
             ax1.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), )
-            ax1.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
             ax6.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), alpha=0.5)
-            ax6.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+            if fragment.z[-1] > 1:
+                ax1.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+                ax6.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
     _, vel_chyba, mass_chyba, _, altitude_chyba, _, _, _ =\
             run_intergration_chyba(V0, M0, theta0, 100e3, R0[i], 0, 1e4, rho_com, 2.5e6)
@@ -205,6 +206,7 @@ ax6.minorticks_on()
 ax6.set_ylim(0, 60)
 ax6.set_xlabel(r'Velocity [km/s]', fontsize=13)
 ax6.set_ylabel(r'Altitude [km]', fontsize=13)
+ax6.legend(frameon=False, loc='upper left')
 
 
 fig.tight_layout()
