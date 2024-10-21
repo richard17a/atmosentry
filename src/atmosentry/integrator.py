@@ -118,7 +118,6 @@ def event_dVdt_zero(t: float,
         """
         included the terminal velocity check
         """
-
         out_num = 0
         # NEED TO ADD A TERMINAL VELOCITY CHECk IN MAIN SIMULATION ROUTINE -- CAN USE TERMINAL VELOCITY EQUATION DOWN TO THE SURFACE...
 
@@ -150,7 +149,7 @@ def run(impactor: Meteoroid,
         rho_atmo0: Density of atmosphere at altitude=0
     """
 
-    t_span = (0, 500)
+    t_span = (0, 5000)
 
     def event_N_crit_with_Nc(t: float, y: list):
         """
@@ -179,7 +178,8 @@ def run(impactor: Meteoroid,
     event_N_crit_with_Nc.direction = -1
 
     # these events terminate the integration (i.e. when the comet's mass = 0, or the altitude = 0 etc.)
-    events = [event_Z_crossing, event_mass_zero, event_dVdt_zero_rhoatm0, event_N_crit_with_Nc]
+    # events = [event_Z_crossing, event_mass_zero, event_dVdt_zero_rhoatm0, event_N_crit_with_Nc]
+    events = [event_Z_crossing, event_mass_zero, event_N_crit_with_Nc]
 
     x0, y0, z0 = impactor.x, impactor.y, impactor.z
     vx0, vy0, vz0 = impactor.vx, impactor.vy, impactor.vz
@@ -214,6 +214,7 @@ def run(impactor: Meteoroid,
     y = sol_iso.sol(t)[6][:len(t)]
     z = sol_iso.sol(t)[7][:len(t)]
     radius = sol_iso.sol(t)[8][:len(t)]
+    N_RT = sol_iso.sol(t)[10][:len(t)]
 
     vel = np.sqrt(vx ** 2 + vy ** 2 + vz ** 2)
     Ekin = 0.5 * mass * (vel ** 2)
@@ -221,4 +222,4 @@ def run(impactor: Meteoroid,
     dM = np.abs(np.diff(mass, append=mass[-1]))
     dEkin = np.abs(np.diff(Ekin, append=Ekin[-1]))
 
-    return t, mass, theta, radius, dM, dEkin, x, y, z, vx, vy, vz
+    return t, mass, theta, radius, dM, dEkin, x, y, z, vx, vy, vz, N_RT

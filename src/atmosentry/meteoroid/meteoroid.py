@@ -24,7 +24,8 @@ class Meteoroid():
                  rho,
                  eta,
                  dM=None,
-                 dEkin=None):
+                 dEkin=None, 
+                 children=False):
         
         self.x = x
         self.y = y
@@ -40,5 +41,6 @@ class Meteoroid():
         self.eta = eta
         self.dM = dM
         self.dEkin = dEkin
+        self.children = children
 
         # should add setters and getters here (and check mass, radius, density are consistent.....)

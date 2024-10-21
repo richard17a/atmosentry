@@ -90,7 +90,8 @@ if len(sim.fragments):
 
         ax.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako(0.6), )
         if fragment.z[-1] > 1:
-            ax.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+            if fragment.children:
+                ax.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
 ax.set_ylim(0, 25)
 
@@ -104,7 +105,8 @@ if len(sim.fragments):
 
         axins.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako(0.6), )
         if fragment.z[-1] > 1:
-            axins.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+            if fragment.children:
+                axins.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
 mark_inset(ax, axins, loc1=2, loc2=4, fc="none", ec="0.5", linestyle='--')
 
@@ -132,7 +134,8 @@ if len(sim.fragments):
         
         cax.plot(fragment.mass / M0, fragment.z / 1e3, c=cm.bamako(0.6))
         if fragment.z[-1] > 1:
-            cax.plot(fragment.mass[-1] / M0, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+            if fragment.children:
+                cax.plot(fragment.mass[-1] / M0, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
 cax.set_xlim(0, 1)
 cax.set_ylim(0, 25)
@@ -148,6 +151,6 @@ cax.minorticks_on()
 
 plt.tight_layout()
 
-# plt.savefig('zoom_in_panel.pdf', format='pdf')
+plt.savefig('zoom_in_panel.pdf', format='pdf')
 
 plt.show()

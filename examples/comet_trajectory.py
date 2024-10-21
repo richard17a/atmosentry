@@ -122,8 +122,10 @@ for i in range(len(R0)):
             ax1.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), )
             ax6.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), alpha=0.5)
             if fragment.z[-1] > 1:
-                ax1.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
-                ax6.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+                if fragment.children:
+
+                    ax1.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+                    ax6.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
     _, vel_chyba, mass_chyba, _, altitude_chyba, _, _, _ =\
             run_intergration_chyba(V0, M0, theta0, 100e3, R0[i], 0, 1e4, rho_com, 2.5e6)

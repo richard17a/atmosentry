@@ -356,7 +356,7 @@ class Simulation():
     
     def integrate(self):
 
-        t, mass, theta, radius, dM, dEkin, x, y, z, vx, vy, vz =\
+        t, mass, theta, radius, dM, dEkin, x, y, z, vx, vy, vz, N_RT =\
             run(self._impactor,
                         self._Cd,
                         self._Ch,
@@ -373,6 +373,7 @@ class Simulation():
 
         if self._fragments_track:
             if self._impactor.z[-1] > 1:
+                self._impactor.children = True
 
                 child_fragments = generate_fragments(self._impactor, self.rho0, self.H, self.alpha, self.beta, self.Nfrag)
                 
@@ -382,7 +383,7 @@ class Simulation():
                     for fragment in child_fragments:
                         print(f'R_0={self._impactor.radius[0]}m, N_frags={len(child_fragments)}', end='\r', flush=True)
 
-                        _, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f =\
+                        t_f, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f, N_RTf =\
                             run(fragment,
                                 self._Cd,
                                 self._Ch,
@@ -394,6 +395,8 @@ class Simulation():
                                 N_c=2.
                             )
                         self.update_meteoroid(fragment, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f)
+
+                        v_f = np.sqrt(vx_f ** 2 + vy_f ** 2 + vz_f ** 2)
                         
                         if z_f[-1] < 1:
                             self._fragments = np.append(self._fragments, fragment)
@@ -415,9 +418,9 @@ class Simulation():
 
                             self.update_meteoroid(fragment, mass_f, theta_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f)
                             self._fragments = np.append(self._fragments, fragment)
-                            # OK - not perfect. need to include checks somewhere to stop negative masses being created...
 
                         else:
+                            fragment.children = True
                             self._fragments = np.append(self._fragments, fragment)
                             child_frags = generate_fragments(fragment, self.rho0, self.H, self.alpha, self.beta, self.Nfrag)
                             fragments_tmp = np.append(fragments_tmp, child_frags)
