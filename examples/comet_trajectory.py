@@ -94,7 +94,6 @@ for i in range(len(R0)):
                         vx=-V0 * np.cos(theta0),
                         vy=0,
                         vz=-V0 * np.sin(theta0),
-                        theta=theta0,
                         radius=R0[i],
                         mass=M0,
                         sigma=1e4,
@@ -219,11 +218,11 @@ axs = [ax1, ax2, ax3, ax4, ax5]
 for p, l in zip(axs, ttt):
     p.annotate(l, xy=(-0., 1.04), xycoords="axes fraction", fontsize=10, weight='bold')
 
-with PdfPages('comet_trajectory_gallery.pdf') as pdf:
-    pdf.savefig(fig, bbox_inches='tight', )
+# with PdfPages('comet_trajectory_gallery.pdf') as pdf:
+#     pdf.savefig(fig, bbox_inches='tight', )
 
 
-with PdfPages('chyba_comparison.pdf') as pdf:
-    pdf.savefig(fig6, bbox_inches='tight', )
+# with PdfPages('chyba_comparison.pdf') as pdf:
+    # pdf.savefig(fig6, bbox_inches='tight', )
 
 plt.show()
