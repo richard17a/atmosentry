@@ -57,56 +57,62 @@ def calc_D_crater(M_imp, D_imp, v_imp, theta_imp):
     return 1.677 * (M_imp ** 0.113) * (D_imp ** -0.22) * (rho_tar ** (-1/3)) * ((0.5 * M_imp * v_imp ** 2) ** 0.22) * (9.81 ** -0.22) * (np.sin(theta_imp) ** (1/3))
 
 
-R0 = 100
-V0 = 20e3
+def plot_frags(color='k'):
 
-rho_com = 0.6e3
-theta0 = 45 * np.pi / 180
+    R0 = 100
+    V0 = 20e3
 
-M0 = rho_com * (4 * np.pi / 3) * (R0 ** 3)
+    rho_com = 0.6e3
+    theta0 = 45 * np.pi / 180
 
-impactor = Meteoroid(x=0,
-                        y=0,
-                        z=100e3,
-                        vx=-V0 * np.cos(theta0),
-                        vy=0,
-                        vz=-V0 * np.sin(theta0),
-                        theta=theta0,
-                        radius=R0,
-                        mass=M0,
-                        sigma=1e4,
-                        rho=rho_com,
-                        eta=2.5e6)
+    M0 = rho_com * (4 * np.pi / 3) * (R0 ** 3)
 
-sim = Simulation()
-sim.impactor = impactor
-sim.integrate()
+    impactor = Meteoroid(x=0,
+                            y=0,
+                            z=100e3,
+                            vx=-V0 * np.cos(theta0),
+                            vy=0,
+                            vz=-V0 * np.sin(theta0),
+                            theta=theta0,
+                            radius=R0,
+                            mass=M0,
+                            sigma=1e4,
+                            rho=rho_com,
+                            eta=2.5e6)
+
+    sim = Simulation()
+    sim.impactor = impactor
+    sim.integrate()
+
+    surface_frags = [frag for frag in sim.fragments if frag.z[-1] < 1]
+    if len(surface_frags):
+
+        x_coords = [frag.x[-1] for frag in surface_frags]
+        y_coords = [frag.y[-1] for frag in surface_frags]
+
+        x_bar = np.mean(x_coords)
+        y_bar = np.mean(y_coords)
+
+        for frag in surface_frags:
+
+            v_imp = np.sqrt(frag.vx[-1] ** 2 + frag.vy[-1] ** 2 + frag.vz[-1] ** 2)
+
+            D_crater = calc_D_crater(frag.mass[-1], 2 * frag.radius[-1], v_imp, frag.theta[-1])
+
+            plt.scatter(frag.x[-1] - x_bar, frag.y[-1] - y_bar, marker=None, facecolors='none')
+            
+            circle = plt.Circle((frag.x[-1] - x_bar, frag.y[-1] - y_bar), D_crater / 2, color=color, fill=False)
+            plt.gca().add_patch(circle)
+
+    else:
+
+        plt.scatter(impactor.x[-1], impactor.y[-1], color=color)
+
 
 _ = plt.figure(figsize=(fig_height, fig_height))
 
-surface_frags = [frag for frag in sim.fragments if frag.z[-1] < 1]
-if len(surface_frags):
-
-    x_coords = [frag.x[-1] for frag in surface_frags]
-    y_coords = [frag.y[-1] for frag in surface_frags]
-
-    x_bar = np.mean(x_coords)
-    y_bar = np.mean(y_coords)
-
-    for frag in surface_frags:
-
-        v_imp = np.sqrt(frag.vx[-1] ** 2 + frag.vy[-1] ** 2 + frag.vz[-1] ** 2)
-
-        D_crater = calc_D_crater(frag.mass[-1], 2 * frag.radius[-1], v_imp, frag.theta[-1])
-
-        plt.scatter(frag.x[-1] - x_bar, frag.y[-1] - y_bar, marker=None, facecolors='none')
-        
-        circle = plt.Circle((frag.x[-1] - x_bar, frag.y[-1] - y_bar), D_crater / 2, color='k', fill=False)
-        plt.gca().add_patch(circle)
-
-else:
-
-    plt.scatter(impactor.x[-1], impactor.y[-1])
+plot_frags('k')
+plot_frags('b')
 
 plt.minorticks_on()
 
@@ -118,9 +124,13 @@ max_lims = [max(x_limits), max(y_limits)]
 plt.xlim(-max(max_lims), max(max_lims))
 plt.ylim(-max(max_lims), max(max_lims))
 
+ticks = plt.gca().get_xticks()
+plt.xticks(ticks)
+plt.yticks(ticks)
+
 plt.xlabel(r'$x$ [m]', fontsize=13)
 plt.ylabel(r'$y$ [m]', fontsize=13)
 
-plt.savefig('crater_field.pdf', bbox_inches='tight', format='pdf')
+plt.savefig('./examples/figures/crater_field.pdf', bbox_inches='tight', format='pdf')
 
 plt.show()
