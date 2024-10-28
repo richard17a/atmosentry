@@ -53,14 +53,15 @@ def generate_fragments(fragment: Meteoroid,
     
     vx, vy, vz = fragment.vx, fragment.vy, fragment.vz
     x, y, z = fragment.x, fragment.y, fragment.z
-    mass, theta = fragment.mass, fragment.theta
+    mass = fragment.mass
+    theta = np.arctan(fragment.vz / fragment.vx)
 
     rho_m = fragment.rho
 
     velocity = np.sqrt(vx ** 2 + vy ** 2 + vz ** 2)
 
     masses = gen_fragment_masses(mass[-1], N_frag)
-    sigma_frags = calc_frag_tensile_strength(mass[-1], masses, fragment.sigma, alpha, beta) # have suspicion this is making them smaller more often than not...
+    sigma_frags = calc_frag_tensile_strength(mass[-1], masses, fragment.sigma, alpha, beta)
 
     v_alpha, v_beta = calc_fragment_velocities(rho_atm * np.exp(-z[-1]/H), rho_m, velocity[-1], mass[-1], masses)
 
@@ -69,9 +70,7 @@ def generate_fragments(fragment: Meteoroid,
     fragments = []
     for counter, _ in enumerate(masses):
         
-        # r_frag = (3 * masses[counter] / (4 * rho_m * np.pi)) ** (1./3.)
         r_frag = np.sqrt(masses[counter] / (rho_m * np.pi * h_final))
-        # Ok korycansky and Zahnle model fragments as cylinders -- NOT spheres. need to update this (and work out why it stops code running)
 
         v_frag_x = vx[-1] + v_beta[counter] * np.cos(theta[-1])
         v_frag_y = vy[-1] + v_alpha[counter]
@@ -79,8 +78,8 @@ def generate_fragments(fragment: Meteoroid,
 
         frag = Meteoroid(x=x[-1], y=y[-1], z=z[-1],
                          vx=v_frag_x, vy=v_frag_y, vz=v_frag_z,
-                         theta=theta[-1], radius=r_frag, mass=masses[counter],
-                         rho=rho_m, sigma=sigma_frags[counter], eta=fragment.eta)
+                         radius=r_frag, mass=masses[counter], rho=rho_m, 
+                         sigma=sigma_frags[counter], eta=fragment.eta)
 
         fragments = np.append(frag, fragments)
 

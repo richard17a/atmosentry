@@ -17,7 +17,6 @@ class Meteoroid():
                  vx, 
                  vy, 
                  vz, 
-                 theta, 
                  radius, 
                  mass, 
                  sigma,
@@ -33,7 +32,6 @@ class Meteoroid():
         self.vx = vx
         self.vy = vy
         self.vz = vz
-        self.theta = theta
         self.radius = radius
         self.mass = mass
         self.sigma = sigma
