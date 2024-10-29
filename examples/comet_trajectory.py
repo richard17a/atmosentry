@@ -140,15 +140,26 @@ for i in range(len(R0)):
         vel = np.sqrt(sim.impactor.vx ** 2 + sim.impactor.vy ** 2 + sim.impactor.vz ** 2)
         ax2.scatter(sim.impactor.mass[-1] / M0, vel[-1] / 1e3, color=cm.bamako((len(R0) - i) / len(R0)), marker='.', label=rf'$R_0=$ {R0[i]} m')
 
-    if impactor.z[-1] > 1:
-        ax3.scatter(impactor.sigma / 1e3, impactor.z[-1] / 1e3, color=cm.bamako((len(R0) - i) / len(R0)), marker='.')
-
     if len(sim.fragments):
-        
-        for fragment in sim.fragments:
+        fragments_surface = [fragment for fragment in sim.fragments if fragment.z[-1] < 1]
+        rads = [fragment.radius[-1] / R0[i] for fragment in fragments_surface]
+        vels = [np.sqrt(fragment.vx[-1] ** 2 + fragment.vy[-1] ** 2 + fragment.vz[-1] ** 2) / 1e3 for fragment in fragments_surface]
 
-            ax3.scatter(fragment.sigma / 1e3, fragment.z[-1] / 1e3, color=cm.bamako((len(R0) - i) / len(R0)), marker='.', zorder=int(i))
+        ax3.scatter(rads, vels, marker='.', color=cm.bamako((len(R0) - i) / len(R0)))
+    else:
+        vel = np.sqrt(sim.impactor.vx ** 2 + sim.impactor.vy ** 2 + sim.impactor.vz ** 2)
+        ax3.scatter(sim.impactor.radius[-1] / R0[i], vel[-1] / 1e3, color=cm.bamako((len(R0) - i) / len(R0)), marker='.')
 
+    # ax3.plot(impactor.radius / R0[i], impactor.z / 1e3, color=cm.bamako((len(R0) - i) / len(R0)))
+
+    # if len(sim.fragments):
+    #     ax3.plot(impactor.radius[-1] / R0[i], impactor.z[-1] / 1e3, 'x', color='k', alpha=0.5)
+
+    #     for fragment in sim.fragments:
+
+    #         ax3.plot(fragment.radius / R0[i], fragment.z / 1e3, color=cm.bamako((len(R0) - i) / len(R0)))
+    #         if fragment.z[-1] > 1:
+    #             ax3.plot(fragment.radius[-1] / R0[i], fragment.z[-1] / 1e3, 'x', color='k', alpha=0.5)
 
     altitudes = np.linspace(0, 100e3, 1000)
     cumulative_energy_deposition = np.zeros_like(altitudes)
@@ -179,20 +190,21 @@ ax1.legend(frameon=False, loc='upper left')
 
 ax2.axhline(20, c='tab:gray', ls='--', zorder=0, alpha=0.5)
 ax2.axvline(1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
-ax2.set_xlabel(r'Fragment mass $[m_{\rm frag}/m_0]$', fontsize=13)
+ax2.set_xlabel(r'Fragment mass $[m_{\rm frag}/M_0]$', fontsize=13)
 ax2.set_ylabel('Velocity [km/s]', fontsize=13)
 ax2.minorticks_on()
 
-ax3.axvline(1e1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
-ax3.set_xscale('log')
-ax3.set_ylim(0, 60)
-ax3.set_xlabel(r'Break-up strength [kPa]', fontsize=13)
+# ax3.axvline(1e1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
+# ax3.set_xscale('log')
+ax3.axhline(20, c='tab:gray', ls='--', zorder=0, alpha=0.5)
+ax3.axvline(1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
+ax3.set_xlabel(r'Fragment radius $[r_{\rm frag}/R_0]$', fontsize=13)
 ax3.set_ylabel('Altitude [km]', fontsize=13)
 ax3.minorticks_on()
 
 ax4.set_xlim(0, 1)
 ax4.set_ylim(0, 60)
-ax4.set_xlabel(r'Cumulative mass loss [$m_0$]', fontsize=13)
+ax4.set_xlabel(r'Cumulative mass loss [$M_0$]', fontsize=13)
 ax4.set_ylabel('Altitude [km]', fontsize=13)
 ax4.minorticks_on()
 
@@ -218,11 +230,11 @@ axs = [ax1, ax2, ax3, ax4, ax5]
 for p, l in zip(axs, ttt):
     p.annotate(l, xy=(-0., 1.04), xycoords="axes fraction", fontsize=10, weight='bold')
 
-# with PdfPages('comet_trajectory_gallery.pdf') as pdf:
-#     pdf.savefig(fig, bbox_inches='tight', )
+with PdfPages('./examples/figures/comet_trajectory_gallery.pdf') as pdf:
+    pdf.savefig(fig, bbox_inches='tight', )
 
 
-# with PdfPages('chyba_comparison.pdf') as pdf:
-    # pdf.savefig(fig6, bbox_inches='tight', )
+with PdfPages('./examples/figures/chyba_comparison.pdf') as pdf:
+    pdf.savefig(fig6, bbox_inches='tight', )
 
 plt.show()
