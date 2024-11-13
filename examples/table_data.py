@@ -133,16 +133,15 @@ def main():
 
 def analysis():
 
-    data = pd.read_fwf('./examples/data/output4.txt', sep='\t', header=None)
+    data = pd.read_fwf('./examples/data/output2.txt', sep='\t', header=None)
 
     column_names = data.iloc[0, 0].split('\t')
     column_names[0] = '$R_0$ [km]'
     column_names[1] = "Fragmentation"
 
-    data = pd.read_csv('./examples/data/output4.txt', sep='\t', skiprows=1, header=None)
+    data = pd.read_csv('./examples/data/output2.txt', sep='\t', skiprows=1, header=None)
 
     data.columns = column_names
-    # print(data.columns)
 
     data['$R_0$ [km]'] = data['$R_0$ [km]'].map('{:.2f}'.format)
     data['Mf [M0]'] = data['Mf [M0]'].map('{:.2f}'.format) + ' $\pm$ ' + data['sigma_Mf[M0]'].map('{:.2f}'.format)
@@ -153,7 +152,7 @@ def analysis():
 
     latex_table = data.to_latex(index=False, column_format='|c|'*len(data.columns), escape=False)
 
-    with open('./examples/data/table_combined4.tex', 'w') as f:
+    with open('./examples/data/table_combined2.tex', 'w') as f:
         f.write(latex_table)
 
 
@@ -228,5 +227,5 @@ def plot_data():
 if __name__ == "__main__":
 
     # main()
-    # analysis()
-    plot_data()
+    analysis()
+    # plot_data()

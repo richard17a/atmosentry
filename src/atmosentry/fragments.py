@@ -76,14 +76,11 @@ def generate_fragments(fragment: Meteoroid,
         v_frag_y = vy[-1] + v_alpha[counter]
         v_frag_z = vz[-1] + v_beta[counter] * np.sin(theta[-1])
 
-        # frag = Meteoroid(x=x[-1], y=y[-1], z=z[-1],
-        #                  vx=v_frag_x, vy=v_frag_y, vz=v_frag_z,
-        #                  radius=r_frag, mass=masses[counter], rho=rho_m, 
-        #                  sigma=sigma_frags[counter], eta=fragment.eta)
         frag = Meteoroid(x=x[-1], y=y[-1], z=z[-1],
                          vx=v_frag_x, vy=v_frag_y, vz=v_frag_z,
                          radius=r_frag, mass=masses[counter], rho=rho_m, 
-                         sigma=fragment.sigma, eta=fragment.eta)
+                         sigma=fragment.sigma, eta=fragment.eta,
+                         t_init=fragment.t[-1])
 
         fragments = np.append(frag, fragments)
 

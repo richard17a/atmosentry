@@ -64,7 +64,6 @@ impactor = Meteoroid(x=0,
                         vx=-V0 * np.cos(theta0),
                         vy=0,
                         vz=-V0 * np.sin(theta0),
-                        theta=theta0,
                         radius=R0,
                         mass=M0,
                         sigma=1e4,
@@ -78,8 +77,16 @@ sim.integrate()
 _, ax = plt.subplots(figsize=(1.25 * fig_width, fig_height))
 
 vel = np.sqrt(sim.impactor.vx ** 2 + sim.impactor.vy ** 2 + sim.impactor.vz ** 2)
+vel = vel[sim.impactor.z <= 25e3]
+time0 = sim.impactor.t[sim.impactor.z <= 25e3]
 
-ax.plot(vel / 1e3, sim.impactor.z / 1e3, c=cm.bamako(0.6), label=fr'$R_0=$ {R0} m')
+points = np.array([vel / 1e3, sim.impactor.z[sim.impactor.z <= 25e3] / 1e3]).T.reshape(-1, 1, 2)
+segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+lc0 = matplotlib.collections.LineCollection(segments, cmap=cm.bamako, norm=plt.Normalize(time0.min(), max([fragment.t[-1] for fragment in sim.fragments if fragment.z[-1] < 1])))
+lc0.set_array(time0)
+
+ax.add_collection(lc0)
 
 if len(sim.fragments):
     ax.plot(vel[-1] / 1e3, sim.impactor.z[-1] / 1e3, 'x', c='k', alpha=0.5)
@@ -88,7 +95,14 @@ if len(sim.fragments):
 
         vel = np.sqrt(fragment.vx ** 2 + fragment.vy ** 2 + fragment.vz ** 2)
 
-        ax.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako(0.6), )
+        points = np.array([vel / 1e3, fragment.z / 1e3]).T.reshape(-1, 1, 2)
+        segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+        lc = matplotlib.collections.LineCollection(segments, cmap=cm.bamako, norm=plt.Normalize(time0.min(), max([fragment.t[-1] for fragment in sim.fragments if fragment.z[-1] < 1])))
+        lc.set_array(fragment.t)
+
+        ax.add_collection(lc)
+
         if fragment.z[-1] > 1:
             if fragment.children:
                 ax.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
@@ -97,13 +111,19 @@ ax.set_ylim(0, 25)
 
 axins = inset_axes(ax, loc='upper left', width="70%", height="40%")
 if len(sim.fragments):
-    axins.plot(vel[-1] / 1e3, sim.impactor.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
     for fragment in sim.fragments:
 
         vel = np.sqrt(fragment.vx ** 2 + fragment.vy ** 2 + fragment.vz ** 2)
 
-        axins.plot(vel / 1e3, fragment.z / 1e3, c=cm.bamako(0.6), )
+        points = np.array([vel / 1e3, fragment.z / 1e3]).T.reshape(-1, 1, 2)
+        segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+        lc = matplotlib.collections.LineCollection(segments, cmap=cm.bamako, norm=plt.Normalize(time0.min(), max([fragment.t[-1] for fragment in sim.fragments if fragment.z[-1] < 1])))
+        lc.set_array(fragment.t)
+
+        axins.add_collection(lc)
+
         if fragment.z[-1] > 1:
             if fragment.children:
                 axins.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
@@ -125,14 +145,27 @@ ax.set_xlim(0.9 * min(xlims), max(xlims))
 ax_divider = make_axes_locatable(ax)
 cax = ax_divider.append_axes("right", size="30%", pad=0.2)
 
-cax.plot(impactor.mass / M0, sim.impactor.z / 1e3, c=cm.bamako(0.6))
+points = np.array([impactor.mass[sim.impactor.z <= 25e3] / M0, sim.impactor.z[sim.impactor.z <= 25e3] / 1e3]).T.reshape(-1, 1, 2)
+segments = np.concatenate([points[:-1], points[1:]], axis=1)
+time = impactor.t[impactor.z <= 25e3]
+
+lc = matplotlib.collections.LineCollection(segments, cmap=cm.bamako, norm=plt.Normalize(time0.min(), max([fragment.t[-1] for fragment in sim.fragments if fragment.z[-1] < 1])))
+lc.set_array(time)
+
+cax.add_collection(lc)
 
 if len(sim.fragments):
     cax.plot(impactor.mass[-1] / M0, sim.impactor.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
     for fragment in sim.fragments:
-        
-        cax.plot(fragment.mass / M0, fragment.z / 1e3, c=cm.bamako(0.6))
+
+        points = np.array([fragment.mass / M0, fragment.z / 1e3]).T.reshape(-1, 1, 2)
+        segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+        lc = matplotlib.collections.LineCollection(segments, cmap=cm.bamako, norm=plt.Normalize(time0.min(), max([fragment.t[-1] for fragment in sim.fragments if fragment.z[-1] < 1])))
+        lc.set_array(fragment.t)
+
+        cax.add_collection(lc)
         if fragment.z[-1] > 1:
             if fragment.children:
                 cax.plot(fragment.mass[-1] / M0, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
@@ -149,8 +182,13 @@ cax.set_xlabel(r'Mass [$M_0$]', fontsize=13)
 ax.minorticks_on()
 cax.minorticks_on()
 
+cbar = plt.colorbar(lc0, pad=0.03)
+cbar.set_label(r'Time [s]', fontsize=13, rotation=270, labelpad=15)
+cbar.ax.invert_yaxis()
+cbar.ax.minorticks_on()
+
 plt.tight_layout()
 
-plt.savefig('zoom_in_panel.pdf', format='pdf')
+# plt.savefig('examples/figures/zoom_in_panel.pdf', format='pdf')
 
 plt.show()

@@ -24,7 +24,9 @@ class Meteoroid():
                  eta,
                  dM=None,
                  dEkin=None, 
-                 children=False):
+                 children=False,
+                 t_init=0,
+                 t=[]):
         
         self.x = x
         self.y = y
@@ -40,5 +42,7 @@ class Meteoroid():
         self.dM = dM
         self.dEkin = dEkin
         self.children = children
+        self.t_init = t_init
+        self.t = t
 
         # should add setters and getters here (and check mass, radius, density are consistent.....)
