@@ -1,3 +1,5 @@
+# pylint: disable=C0103
+
 """
 Module: Meteoroid fragmentation methods
 
@@ -17,7 +19,7 @@ def gen_fragment_masses(m_init: float, N_frags: int):
     variable x, such that
     m_i / m_init = x, where x ~ U[0,1]
     Child fragment masses are then normalised such that
-    \sum{m_i} = m_init
+    sum{m_i} = m_init
 
     Parameters:
     ----------
@@ -31,17 +33,18 @@ def gen_fragment_masses(m_init: float, N_frags: int):
     np.ndarray
         Array of child fragment masses (note: this will sum to m_init)
     """
-    
+
     masses = np.random.rand(N_frags)
     masses = masses / np.sum(masses) * m_init
 
     return masses
 
 
-def calc_fragment_velocities(rho_atm: float, rho_imp: float, vel: float, m_init: float, frag_masses: list):
+def calc_fragment_velocities(rho_atm: float, rho_imp: float, vel: float,
+                             m_init: float, frag_masses: list):
     """
-    Calculates the transverse velocities (v_alpha, v_beta) of child fragments after fragmentation, following 
-    the procedure described in the article. 
+    Calculates the transverse velocities (v_alpha, v_beta) of child fragments after fragmentation,
+    following the procedure described in the article. 
 
     Fragment velocities are computed along two perpendicular components:
         - v_alpha: Velocity in the horizontal plane.
@@ -71,18 +74,18 @@ def calc_fragment_velocities(rho_atm: float, rho_imp: float, vel: float, m_init:
         v_beta : np.ndarray
             beta component of fragment's transverse velocity
     """
-    
+
     vs = vel * np.sqrt(rho_atm / rho_imp)
-    
+
     phi = 2 * np.pi * np.random.rand(len(frag_masses))
-    
+
     v_alpha = vs * (np.cos(phi) - np.sum(frag_masses * np.cos(phi)) / m_init)
     v_beta = vs * (np.sin(phi) - np.sum(frag_masses * np.sin(phi)) / m_init)
-    
+
     return v_alpha, v_beta
 
 
-def generate_fragments(fragment: Meteoroid, 
+def generate_fragments(fragment: Meteoroid,
                        rho_atm: float,
                        H: float,
                        N_frag: int):
@@ -110,7 +113,7 @@ def generate_fragments(fragment: Meteoroid,
     list of Meteoroid
         A list of `Meteoroid` objects corresponding to the child fragments.
     """
-    
+
     vx, vy, vz = fragment.vx, fragment.vy, fragment.vz
     x, y, z = fragment.x, fragment.y, fragment.z
     mass = fragment.mass
@@ -122,14 +125,16 @@ def generate_fragments(fragment: Meteoroid,
 
     masses = gen_fragment_masses(mass[-1], N_frag)
 
-    v_alpha, v_beta = calc_fragment_velocities(rho_atm * np.exp(-z[-1]/H), rho_m, velocity[-1], mass[-1], masses)
+    v_alpha, v_beta = calc_fragment_velocities(rho_atm * np.exp(-z[-1]/H),
+                                               rho_m, velocity[-1], mass[-1],
+                                               masses)
 
     h_final = mass[-1] / (rho_m * np.pi * fragment.radius[-1] ** 2)
 
     fragments = []
-    for counter, _ in enumerate(masses):
-        
-        r_frag = np.sqrt(masses[counter] / (rho_m * np.pi * h_final))
+    for counter, mass in enumerate(masses):
+
+        r_frag = np.sqrt(mass / (rho_m * np.pi * h_final))
 
         v_frag_x = vx[-1] + v_beta[counter] * np.cos(theta[-1])
         v_frag_y = vy[-1] + v_alpha[counter]
@@ -137,7 +142,7 @@ def generate_fragments(fragment: Meteoroid,
 
         frag = Meteoroid(x=x[-1], y=y[-1], z=z[-1],
                          vx=v_frag_x, vy=v_frag_y, vz=v_frag_z,
-                         radius=r_frag, mass=masses[counter], rho=rho_m, 
+                         radius=r_frag, mass=mass, rho=rho_m,
                          sigma=fragment.sigma, eta=fragment.eta,
                          t_init=fragment.t[-1])
 
