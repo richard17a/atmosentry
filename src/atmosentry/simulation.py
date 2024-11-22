@@ -1,10 +1,10 @@
+# pylint: disable=C0103
+
 """
 Add docstring...
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.integrate import solve_ivp
 from atmosentry.meteoroid import Meteoroid
 from .integrator import run
 from .fragments import generate_fragments
@@ -15,7 +15,7 @@ class Simulation():
     This is the atmospheric entry simulation class.
     """
 
-    def __init__(self, 
+    def __init__(self,
                  t=0.,
                  fragments=np.array([]),
                  Cd=0.7,
@@ -27,7 +27,7 @@ class Simulation():
                  Nfrag=2,
                  fragments_track=True
                  ):
-        
+
         self.t = t
         self.fragments = fragments
         self.Cd=Cd
@@ -74,7 +74,7 @@ class Simulation():
             fragments: ADD DESCRIPTION
         """
         return self._fragments
-    
+
     @fragments.setter
     def fragments(self, fragments):
         """
@@ -282,7 +282,7 @@ class Simulation():
         Docstring
         """
         return self._impactor
-    
+
     @impactor.setter
     def impactor(self, value):
         """
@@ -292,18 +292,18 @@ class Simulation():
             raise TypeError("Impactor must be a Meteoroid object.")
         if isinstance(value, Meteoroid):
             self._impactor = value
-        
+
     @staticmethod
-    def update_meteoroid(impactor: Meteoroid, 
-                         mass: float, 
-                         radius: float, 
+    def update_meteoroid(impactor: Meteoroid,
+                         mass: float,
+                         radius: float,
                          dM: float,
                          dEkin: float,
-                         x: float, 
-                         y: float, 
-                         z: float, 
-                         vx: float, 
-                         vy: float, 
+                         x: float,
+                         y: float,
+                         z: float,
+                         vx: float,
+                         vy: float,
                          vz: float,
                          t: list):
         """
@@ -321,7 +321,7 @@ class Simulation():
         impactor.dM = dM
         impactor.dEkin = dEkin
         impactor.t = t + impactor.t_init
-    
+
     def integrate(self):
 
         t, mass, radius, dM, dEkin, x, y, z, vx, vy, vz, _ =\
@@ -334,7 +334,7 @@ class Simulation():
                         self._H,
                         N_c=2.
             )
-    
+
         self._t = t
         self.update_meteoroid(self._impactor, mass, radius, dM, dEkin, x, y, z, vx, vy, vz, t)
 
@@ -343,14 +343,15 @@ class Simulation():
                 self._impactor.children = True
 
                 child_fragments = generate_fragments(self._impactor, self.rho0, self.H, self.Nfrag)
-                
+
                 while len(child_fragments) > 0:
                     fragments_tmp = []
 
                     for fragment in child_fragments:
-                        print(f'R_0={self._impactor.radius[0]}m, N_frags={len(child_fragments)}', end='\r', flush=True)
+                        print(f'R_0={self._impactor.radius[0]}m, N_frags={len(child_fragments)}',\
+                              end='\r', flush=True)
 
-                        t_f, mass_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f, N_RTf =\
+                        t_f, mass_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f, _ =\
                             run(fragment,
                                 self._Cd,
                                 self._Ch,
@@ -360,8 +361,9 @@ class Simulation():
                                 self._H,
                                 N_c=2.
                             )
-                        self.update_meteoroid(fragment, mass_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f, t_f)
-                        
+                        self.update_meteoroid(fragment, mass_f, radius_f, dM_f, dEkin_f, x_f, y_f,
+                                              z_f, vx_f, vy_f, vz_f, t_f)
+
                         if z_f[-1] < 1:
                             self._fragments = np.append(self._fragments, fragment)
                         elif mass_f[-1] < 0.005 * self._impactor.mass[0]:
@@ -379,13 +381,15 @@ class Simulation():
                             dM_f = np.append(dM_f, mass_f[-1])
                             dEkin_f = np.append(dEkin_f, 0.5 * mass_f[-1] * vel)
 
-                            self.update_meteoroid(fragment, mass_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f, t_f)
+                            self.update_meteoroid(fragment, mass_f, radius_f, dM_f, dEkin_f,
+                                                  x_f, y_f, z_f, vx_f, vy_f, vz_f, t_f)
                             self._fragments = np.append(self._fragments, fragment)
 
                         else:
                             fragment.children = True
                             self._fragments = np.append(self._fragments, fragment)
-                            child_frags = generate_fragments(fragment, self.rho0, self.H, self.Nfrag)
+                            child_frags = generate_fragments(fragment, self.rho0,
+                                                             self.H, self.Nfrag)
                             fragments_tmp = np.append(fragments_tmp, child_frags)
-                    
+
                     child_fragments = fragments_tmp

@@ -1,7 +1,9 @@
 # pylint: disable=C0103
 
 """
-Add docstring...
+This module contains the integrator used to simulate the atmospheric trajectory of a meteoroid through
+the atmosphere, including the effects of drag, mass loss due to ablation, deformation, and 
+fragmentation.
 """
 
 import numpy as np
@@ -22,7 +24,47 @@ def differential_equations(t: float,
                            H: float):
 
     """
-    Defining the differential equations to be solved when calculating the comets trajectory
+    Defines the system of differential equations for the meteoroid's atmospheric
+    trajectory. This function computes the position, velocity, mass, and size evolution of
+    the meteoroid due to atmospheric passage. 
+
+    Parameters:
+    ----------
+    t : float
+        The integration time (unused but required by scipy.integrate.solve_ivp).
+    y : list
+        A list of state variables [vx, vy, vz, M, x, y, z, R, Rdot, N], where:
+        - vx, vy, vz: velocity components [m/s]
+        - M: mass [kg]
+        - x, y, z: position components [m]
+        - R: radius [m]
+        - Rdot: rate of change of radius [m/s]
+        - N: number of rayleigh-taylor timescales
+    sigma_imp : float
+        Tensile strength of the meteoroid [Pa]
+    rho_imp : float
+        Bulk density of the meteoroid [kg/m^3]
+    eta : float
+        Heat of ablation of the meteoroid [J/kg]
+    C_d : float
+        Drag coefficient [dimensionless]
+    C_h : float
+        Heat transfer coefficient [dimensionless]
+    R_pl : float
+        Radius of the planet [m]
+    M_pl : float
+        Mass of the planet ([kg]
+    rho_atm0 : float
+        Atmospheric surface density [kg/m^3]
+    H : float
+        Atmospheric scale height [m]
+
+    Returns:
+    -------
+    list
+        The time derivatives of the state variables:
+        [dvxdt, dvydt, dvzdt, dMdt, dxdt, dydt, dzdt, R_dot, R_ddot, dNdt].
+
     """
 
     ### ------ Defining constants ------
@@ -66,7 +108,23 @@ def differential_equations(t: float,
 
 def event_Z_crossing(t: float, y: list):
     """
-    Event triggered when altitude crosses 0 (i.e. the comet hits the ground)
+    Event triggered when the altitude crosses zero (i.e., it hits the ground).
+
+    This event is used in the integration process to stop the simulation, signaling 
+    that the meteoroid has completed its atmospheric trajectory.
+
+    Parameters:
+    ----------
+    t : float
+        Simulation time (unused but required by scipy.integrate.solve_ivp)
+    y : list
+        The current state variables
+
+    Returns:
+    -------
+    float
+        The current altitude (z), which will trigger the event when it crosses zero.
+
     """
     del t
 
@@ -75,7 +133,21 @@ def event_Z_crossing(t: float, y: list):
 
 def event_mass_zero(t: float, y: list):
     """
-    Event triggered when all mass has been ablated
+    Event triggered, stopping the integration, when the meteoroid has lost all of its
+    mass due to ablation.
+
+    Parameters:
+    ----------
+    t : float
+        Simulation time (unused but required by scipy.integrate.solve_ivp)
+    y : list
+        The current state variables
+
+    Returns:
+    -------
+    float
+        The current mass (M), which will trigger the event when it reaches zero.
+
     """
     del t
 
@@ -84,7 +156,24 @@ def event_mass_zero(t: float, y: list):
 
 def event_N_crit(t: float, y: list, N_c: float):
     """
-    Docstring
+    Event triggered once there has been N_RT = N_c Rayleigh-Taylor growth timescales. This 
+    defines the onset of fragmentation, given the assumptions used in pancake-models break-
+    down.
+
+    Parameters:
+    ----------
+    t : float
+        Simulation time (unused but required by scipy.integrate.solve_ivp)
+    y : list
+        The current state variables
+    N_c : float
+        The critical number of Rayleigh-Taylor growth timescale (default: 2)
+
+    Returns:
+    -------
+    float
+        N_RT - N-c, which will trigger the event when it reaches zero.
+
     """
     del t
 
@@ -100,26 +189,61 @@ def run(impactor: Meteoroid,
         H: float,
         N_c=2.):
     """
-    This function will run the integration and calculate the atmospheric trjectory of the comet
+    Runs the numerical integration to calculate the meteoroid's atmospheric trajectory,
+    stopping the simulation based on predefined events, which include:
+    - reaching the ground (altitude = 0)
+    - total mass ablation (mass = 0)
+    - the onset of fragmentation (following N_rt = N_c Rayleigh-Taylor timescales)
 
-    Args:
-        V0: Initial velocity of comet
-        M0: Initial mass of comet
-        theta0: Initial angle of comet's trajectory
-        Z0: Initial altitude of comet
-        R0: Intiial radius of comet
-        Rdot0: Initial rate of deformation (this is always zero...!)
-        sigma_imp: Tensile strength of comet
-        rho_imp: Bulk density of comet
-        eta: Comet's heat of ablation
-        rho_atmo0: Density of atmosphere at altitude=0
+    Parameters:
+    ----------
+    impactor : Meteoroid
+        The meteoroid object
+    C_d : float
+        Drag coefficient [dimensionless]
+    C_h : float
+        Heat transfer coefficient [dimensionless]
+    R_pl : float
+        Radius of the planet [m]]
+    M_pl : float
+        Mass of the planet [kg]]
+    rho_atm0 : float
+        Atmospheric surface density [kg/m^3]
+    H : float
+        Atmospheric scale height [m]
+    N_c : float, optional
+        The critical number of Rayleigh-Taylor growth timescale (default: 2)
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - t : np.ndarray
+            Simulation times
+        - mass : np.ndarray
+            Meteoroid's mass at each timestep
+        - radius : np.ndarray
+            Meteoroid's radius at each timestep
+        - dM : np.ndarray
+            Meteoroid's mass loss at each timestep
+        - dEkin : np.ndarray
+            Meteoroid's energy loss at each timestep
+        - x, y, z : np.ndarray
+            Meteoroid's position at each timestep
+        - vx, vy, vz : np.ndarray
+            Meteoroid's velocity at each timestep
+        - N_RT : np.ndarray
+            Number of elapsed Rayleigh-Taylor timescales at each timestep
+
     """
 
     t_span = (0, 5000)
 
     def event_N_crit_with_Nc(t: float, y: list):
         """
-        Event triggered when size of pancake exceeds 6 * initial radius
+        Event triggered once there has been N_RT = N_c Rayleigh-Taylor growth timescales. This 
+        defines the onset of fragmentation, given the assumptions used in pancake-models break-
+        down.
         """
 
         return event_N_crit(t, y, N_c)

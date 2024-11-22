@@ -4,3 +4,4 @@
 max-locals = 50
 max-args = 15
 max-positional-arguments = 15
+max-attributes = 25
