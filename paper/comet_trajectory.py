@@ -87,6 +87,7 @@ fig6, ax6 = plt.subplots(1, 1, figsize=(fig_width, fig_height))
 for i in range(len(R0)):
 
     M0 = rho_com * (4 * np.pi / 3) * (R0[i] ** 3)
+    KE0 = 0.5 * M0 * (V0 ** 2)
 
     impactor = Meteoroid(x=0,
                         y=0,
@@ -150,17 +151,6 @@ for i in range(len(R0)):
         vel = np.sqrt(sim.impactor.vx ** 2 + sim.impactor.vy ** 2 + sim.impactor.vz ** 2)
         ax3.scatter(sim.impactor.radius[-1] / R0[i], vel[-1] / 1e3, color=cm.bamako((len(R0) - i) / len(R0)), marker='.')
 
-    # ax3.plot(impactor.radius / R0[i], impactor.z / 1e3, color=cm.bamako((len(R0) - i) / len(R0)))
-
-    # if len(sim.fragments):
-    #     ax3.plot(impactor.radius[-1] / R0[i], impactor.z[-1] / 1e3, 'x', color='k', alpha=0.5)
-
-    #     for fragment in sim.fragments:
-
-    #         ax3.plot(fragment.radius / R0[i], fragment.z / 1e3, color=cm.bamako((len(R0) - i) / len(R0)))
-    #         if fragment.z[-1] > 1:
-    #             ax3.plot(fragment.radius[-1] / R0[i], fragment.z[-1] / 1e3, 'x', color='k', alpha=0.5)
-
     altitudes = np.linspace(0, 100e3, 1000)
     cumulative_energy_deposition = np.zeros_like(altitudes)
     cumulative_mass_deposition = np.zeros_like(altitudes)
@@ -180,7 +170,7 @@ for i in range(len(R0)):
         cumulative_mass_deposition[j] = cumulative_dM
 
     ax4.plot(cumulative_mass_deposition / M0, altitudes / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
-    ax5.plot(cumulative_energy_deposition, altitudes / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
+    ax5.plot(cumulative_energy_deposition / KE0, altitudes / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
 
 ax1.set_ylim(0, 60)
 ax1.set_xlabel(r'Velocity [km/s]', fontsize=13)
@@ -209,9 +199,9 @@ ax4.set_ylabel('Altitude [km]', fontsize=13)
 ax4.minorticks_on()
 
 ax5.set_xscale('log')
-ax5.set_xlim(1e13, 1e20)
+ax5.set_xlim(1e-3, 2)
 ax5.set_ylim(0, 60)
-ax5.set_xlabel(r'Cumulative energy deposition [J]', fontsize=13)
+ax5.set_xlabel(r'Cumulative energy deposition [$E_0$]', fontsize=13)
 ax5.set_ylabel('Altitude [km]', fontsize=13)
 ax5.minorticks_on()
 
