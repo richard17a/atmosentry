@@ -172,11 +172,13 @@ for i in range(len(R0)):
     ax4.plot(cumulative_mass_deposition / M0, altitudes / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
     ax5.plot(cumulative_energy_deposition / KE0, altitudes / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
 
-ax1.set_ylim(0, 60)
+ax1.set_yscale('log')
+ax1.set_ylim(1e-1, 100)
+ax1.set_yticks([0.1, 1, 10, 100], labels=[0.1, 1, 10, 100])
 ax1.set_xlabel(r'Velocity [km/s]', fontsize=13)
 ax1.set_ylabel(r'Altitude [km]', fontsize=13)
 ax1.minorticks_on()
-ax1.legend(frameon=False, loc='upper left')
+ax1.legend(frameon=False, loc=(0.1, 0.03))
 
 ax2.axhline(20, c='tab:gray', ls='--', zorder=0, alpha=0.5)
 ax2.axvline(1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
@@ -184,23 +186,24 @@ ax2.set_xlabel(r'Fragment mass $[m_{\rm frag}/M_0]$', fontsize=13)
 ax2.set_ylabel('Velocity [km/s]', fontsize=13)
 ax2.minorticks_on()
 
-# ax3.axvline(1e1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
-# ax3.set_xscale('log')
 ax3.axhline(20, c='tab:gray', ls='--', zorder=0, alpha=0.5)
 ax3.axvline(1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
 ax3.set_xlabel(r'Fragment radius $[r_{\rm frag}/R_0]$', fontsize=13)
 ax3.set_ylabel('Altitude [km]', fontsize=13)
 ax3.minorticks_on()
 
-ax4.set_xlim(0, 1)
-ax4.set_ylim(0, 60)
+ax4.set_xscale('log')
+ax4.set_xlim(1e-3, 2)
+ax4.set_yscale('log')
+ax4.set_ylim(1e-1, 100)
 ax4.set_xlabel(r'Cumulative mass loss [$M_0$]', fontsize=13)
 ax4.set_ylabel('Altitude [km]', fontsize=13)
 ax4.minorticks_on()
 
 ax5.set_xscale('log')
 ax5.set_xlim(1e-3, 2)
-ax5.set_ylim(0, 60)
+ax5.set_yscale('log')
+ax5.set_ylim(1e-1, 100)
 ax5.set_xlabel(r'Cumulative energy deposition [$E_0$]', fontsize=13)
 ax5.set_ylabel('Altitude [km]', fontsize=13)
 ax5.minorticks_on()
@@ -220,11 +223,11 @@ axs = [ax1, ax2, ax3, ax4, ax5]
 for p, l in zip(axs, ttt):
     p.annotate(l, xy=(-0., 1.04), xycoords="axes fraction", fontsize=10, weight='bold')
 
-# with PdfPages('./paper/figures/comet_trajectory_gallery.pdf') as pdf:
-#     pdf.savefig(fig, bbox_inches='tight', )
+with PdfPages('./paper/figures/comet_trajectory_gallery.pdf') as pdf:
+    pdf.savefig(fig, bbox_inches='tight', )
 
 
-# with PdfPages('./paper/figures/chyba_comparison.pdf') as pdf:
-#     pdf.savefig(fig6, bbox_inches='tight', )
+with PdfPages('./paper/figures/chyba_comparison.pdf') as pdf:
+    pdf.savefig(fig6, bbox_inches='tight', )
 
 plt.show()
