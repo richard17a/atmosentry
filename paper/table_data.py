@@ -101,7 +101,7 @@ def main():
     R_sm = np.append(R_small, R_mid)
     radii = np.append(R_sm, R_large)
 
-    fpath = './examples/data/'
+    fpath = './paper/data/'
     fname = 'output' + str(Nfrags) + '.txt' 
 
     with open(fpath + fname, 'w') as f:
@@ -133,13 +133,13 @@ def main():
 
 def analysis():
 
-    data = pd.read_fwf('./examples/data/output2.txt', sep='\t', header=None)
+    data = pd.read_fwf('./paper/data/output2.txt', sep='\t', header=None)
 
     column_names = data.iloc[0, 0].split('\t')
     column_names[0] = '$R_0$ [km]'
     column_names[1] = "Fragmentation"
 
-    data = pd.read_csv('./examples/data/output2.txt', sep='\t', skiprows=1, header=None)
+    data = pd.read_csv('./paper/data/output2.txt', sep='\t', skiprows=1, header=None)
 
     data.columns = column_names
 
@@ -152,7 +152,7 @@ def analysis():
 
     latex_table = data.to_latex(index=False, column_format='|c|'*len(data.columns), escape=False)
 
-    with open('./examples/data/table_combined2.tex', 'w') as f:
+    with open('./paper/data/table_combined2.tex', 'w') as f:
         f.write(latex_table)
 
 
@@ -219,7 +219,7 @@ def plot_data():
 
     plt.legend(frameon=False, fontsize=11)
 
-    plt.savefig('./examples/figures/Nfrag_sensitivity_vfrag.pdf', format='pdf', bbox_inches='tight')
+    # plt.savefig('./paper/figures/Nfrag_sensitivity_vfrag.pdf', format='pdf', bbox_inches='tight')
 
     plt.show()
 

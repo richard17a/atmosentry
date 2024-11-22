@@ -132,7 +132,7 @@ def main():
     ax1.minorticks_on()
     ax2.minorticks_on()
 
-    plt.savefig('minimum_cometary_diameter.pdf', format='pdf', bbox_inches='tight')
+    # plt.savefig('./paper/figures/minimum_cometary_diameter.pdf', format='pdf', bbox_inches='tight')
 
     plt.show()
 

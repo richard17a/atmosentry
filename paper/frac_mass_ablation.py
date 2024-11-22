@@ -136,6 +136,6 @@ if __name__ == "__main__":
 
     plt.legend(frameon=False)
 
-    plt.savefig('fraction_ablated.pdf', bbox_inches='tight', format='pdf')
+    # plt.savefig('./paper/figures/fraction_ablated.pdf', bbox_inches='tight', format='pdf')
 
     plt.show()

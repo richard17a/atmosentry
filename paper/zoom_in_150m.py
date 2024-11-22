@@ -189,7 +189,7 @@ sim.integrate()
 
 # plt.tight_layout()
 
-# # plt.savefig('examples/figures/zoom_in_panel.pdf', format='pdf')
+# # plt.savefig('./paper/figures/zoom_in_panel.pdf', format='pdf')
 
 # plt.show()
 
@@ -318,6 +318,6 @@ cax.minorticks_on()
 
 plt.tight_layout()
 
-# plt.savefig('examples/figures/zoom_in_panel.pdf', format='pdf')
+# plt.savefig('./paper/figures/zoom_in_panel.pdf', format='pdf')
 
 plt.show()

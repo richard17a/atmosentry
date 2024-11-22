@@ -114,6 +114,6 @@ plt.ylabel('Pressure [bar]', fontsize=13)
 
 plt.legend(frameon=False)
 
-# plt.savefig('mass_ablation_CH_comparison.pdf', bbox_inches='tight', format='pdf')
+# plt.savefig('./paper/figures/mass_ablation_CH_comparison.pdf', bbox_inches='tight', format='pdf')
 
 plt.show()

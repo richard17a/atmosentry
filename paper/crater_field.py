@@ -131,6 +131,6 @@ plt.yticks(ticks)
 plt.xlabel(r'$x$ [m]', fontsize=13)
 plt.ylabel(r'$y$ [m]', fontsize=13)
 
-plt.savefig('./examples/figures/crater_field.pdf', bbox_inches='tight', format='pdf')
+# plt.savefig('./paper/figures/crater_field.pdf', bbox_inches='tight', format='pdf')
 
 plt.show()
