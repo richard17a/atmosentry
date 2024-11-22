@@ -25,8 +25,6 @@ class Simulation():
                  Rpl=6371e3,
                  rho0=1.225,
                  H=7.2e3,
-                 alpha=0.25,
-                 beta=0.5,
                  Nfrag=2,
                  fragments_track=True
                  ):
@@ -40,8 +38,6 @@ class Simulation():
         self.Rpl=Rpl
         self.rho0 = rho0
         self.H=H
-        self.alpha = alpha
-        self.beta = beta
         self.Nfrag = Nfrag
         self.fragments_track = fragments_track
 
@@ -375,7 +371,7 @@ class Simulation():
             if self._impactor.z[-1] > 1:
                 self._impactor.children = True
 
-                child_fragments = generate_fragments(self._impactor, self.rho0, self.H, self.alpha, self.beta, self.Nfrag)
+                child_fragments = generate_fragments(self._impactor, self.rho0, self.H, self.Nfrag)
                 
                 while len(child_fragments) > 0:
                     fragments_tmp = []
@@ -419,7 +415,7 @@ class Simulation():
                         else:
                             fragment.children = True
                             self._fragments = np.append(self._fragments, fragment)
-                            child_frags = generate_fragments(fragment, self.rho0, self.H, self.alpha, self.beta, self.Nfrag)
+                            child_frags = generate_fragments(fragment, self.rho0, self.H, self.Nfrag)
                             fragments_tmp = np.append(fragments_tmp, child_frags)
                     
                     child_fragments = fragments_tmp
