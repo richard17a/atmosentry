@@ -230,49 +230,8 @@ if len(sim.fragments):
             if fragment.children:
                 ax.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
-ax.set_ylim(0, 25)
-
-axins = inset_axes(ax, loc='upper left', width="70%", height="40%")
-if len(sim.fragments):
-
-    counter = 0
-
-    for fragment in sim.fragments:
-
-        vel = np.sqrt(fragment.vx ** 2 + fragment.vy ** 2 + fragment.vz ** 2)
-
-        if counter == 0:
-            axins.plot(vel / 1e3, fragment.z / 1e3, color='tab:green', alpha=1)
-        elif counter == 1:
-            axins.plot(vel / 1e3, fragment.z / 1e3, color='tab:red', alpha=1)
-        elif counter == 2:
-            axins.plot(vel / 1e3, fragment.z / 1e3, color='#2CA083') # green
-        elif counter == 3:
-            axins.plot(vel / 1e3, fragment.z / 1e3, color='#83A02C')# green
-        elif counter == 4:
-            axins.plot(vel / 1e3, fragment.z / 1e3, color='#D67D26')
-        elif counter == 5:
-            axins.plot(vel / 1e3, fragment.z / 1e3, color='#D6267F')
-
-        counter += 1
-
-        if fragment.z[-1] > 1:
-            if fragment.children:
-                axins.plot(vel[-1] / 1e3, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
-
-mark_inset(ax, axins, loc1=2, loc2=4, fc="none", ec="0.5", linestyle='--')
-
-xlims = ax.get_xlim()
-axins.set_xlim(1.05 * min(xlims), 18)
-axins.set_ylim(0, 3)
-
-axins.set_xticks(np.linspace(int(min(ax.get_xlim())), 18, 18 - int(min(ax.get_xlim()))), labels=[])
-axins.set_yticks([0, 1, 2, 3], labels=[])
-
-axins.minorticks_on()
-axins.yaxis.set_tick_params(which='minor', bottom=False)
-
-ax.set_xlim(0.9 * min(xlims), max(xlims))
+ax.set_yscale('log')
+ax.set_ylim(1e-1, 100)
 
 ax_divider = make_axes_locatable(ax)
 cax = ax_divider.append_axes("right", size="30%", pad=0.2)
@@ -305,7 +264,9 @@ if len(sim.fragments):
                 cax.plot(fragment.mass[-1] / M0, fragment.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
 cax.set_xlim(0, 1)
-cax.set_ylim(0, 25)
+
+cax.set_yscale('log')
+cax.set_ylim(1e-1, 100)
 
 cax.set_yticklabels([])
 
