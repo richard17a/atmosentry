@@ -20,7 +20,6 @@ class Simulation():
                  fragments=np.array([]),
                  Cd=0.7,
                  Ch=0.02,
-                 Cl=0.001,
                  Mpl=5.97e24,
                  Rpl=6371e3,
                  rho0=1.225,
@@ -33,7 +32,6 @@ class Simulation():
         self.fragments = fragments
         self.Cd=Cd
         self.Ch=Ch
-        self.Cl=Cl
         self.Mpl=Mpl
         self.Rpl=Rpl
         self.rho0 = rho0
@@ -147,32 +145,6 @@ class Simulation():
             raise TypeError("Heat transfer coefficient must be a float.")
         if isinstance(Ch, float):
             self._Ch = Ch
-
-    @property
-    def Cl(self):
-        """
-        Docstring
-
-        Returns:
-            C_l: ADD DESCRIPTION
-        """
-        return self._Cl
-
-    @Cl.setter
-    def Cl(self, Cl):
-        """
-        Docstring
-
-        Args:
-            C_l (float): ADD DESCRIPTION
-
-        Raises:
-            TypeError: ADD DESCRIPTION
-        """
-        if not isinstance(Cl, float):
-            raise TypeError("Heat transfer coefficient must be a float.")
-        if isinstance(Cl, float):
-            self._Cl = Cl
 
     @property
     def Mpl(self):
@@ -356,7 +328,6 @@ class Simulation():
             run(self._impactor,
                         self._Cd,
                         self._Ch,
-                        self._Cl,
                         self._Rpl,
                         self._Mpl,
                         self._rho0,
@@ -383,7 +354,6 @@ class Simulation():
                             run(fragment,
                                 self._Cd,
                                 self._Ch,
-                                self._Cl,
                                 self._Rpl,
                                 self._Mpl,
                                 self._rho0,

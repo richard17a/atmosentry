@@ -1,4 +1,6 @@
 [MAIN]
 
 [DESIGN]
-max-locals = 25
+max-locals = 50
+max-args = 15
+max-positional-arguments = 15

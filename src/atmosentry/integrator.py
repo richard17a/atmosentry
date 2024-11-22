@@ -1,3 +1,5 @@
+# pylint: disable=C0103
+
 """
 Add docstring...
 """
@@ -14,24 +16,24 @@ def differential_equations(t: float,
                            eta: float,
                            C_d: float,
                            C_h: float,
-                           C_l: float,
                            R_pl: float,
                            M_pl: float,
                            rho_atm0: float,
                            H: float):
-    
+
     """
     Defining the differential equations to be solved when calculating the comets trajectory
     """
 
-    ### ------ Defining constants ------ 
+    ### ------ Defining constants ------
     G = 6.67e-11
     sigma = 5.6704e-8
     T = 25000 # assumed temperature of shocked gas at leading edge of the comet
     ### ----------------------- ###
 
-    vx, vy, vz, M, x, y, z, R, Rdot, N = y
-    
+    vx, vy, vz, M, _, _, z, R, Rdot, _ = y
+    del t
+
     v = np.sqrt(vx ** 2 + vy ** 2 + vz ** 2)
 
     rho_a = rho_atm0 * np.exp(- z / H)
@@ -56,7 +58,7 @@ def differential_equations(t: float,
     else:
         R_dot = 0.0
         R_ddot = 0.0
-        
+
         dNdt = 0
 
     return [dvxdt, dvydt, dvzdt, dMdt, dxdt, dydt, dzdt, R_dot, R_ddot, dNdt]
@@ -66,6 +68,7 @@ def event_Z_crossing(t: float, y: list):
     """
     Event triggered when altitude crosses 0 (i.e. the comet hits the ground)
     """
+    del t
 
     return y[6]
 
@@ -74,6 +77,7 @@ def event_mass_zero(t: float, y: list):
     """
     Event triggered when all mass has been ablated
     """
+    del t
 
     return y[3]
 
@@ -82,6 +86,7 @@ def event_N_crit(t: float, y: list, N_c: float):
     """
     Docstring
     """
+    del t
 
     return N_c - y[9]
 
@@ -89,7 +94,6 @@ def event_N_crit(t: float, y: list, N_c: float):
 def run(impactor: Meteoroid,
         C_d: float,
         C_h: float,
-        C_l: float,
         R_pl: float,
         M_pl: float,
         rho_atm0: float,
@@ -129,7 +133,7 @@ def run(impactor: Meteoroid,
     event_N_crit_with_Nc.terminal = True
     event_N_crit_with_Nc.direction = -1
 
-    # these events terminate the integration (i.e. when the comet's mass = 0, or the altitude = 0 etc.)
+    # these events terminate the integration
     events = [event_Z_crossing, event_mass_zero, event_N_crit_with_Nc]
 
     x0, y0, z0 = impactor.x, impactor.y, impactor.z
@@ -137,14 +141,14 @@ def run(impactor: Meteoroid,
     R0 = impactor.radius
     M0 = impactor.mass
     Rdot0 = 0
-    
+
     rho_imp = impactor.rho
     sigma_imp = impactor.sigma
     eta = impactor.eta
 
     sol_iso = solve_ivp(
         fun=lambda t, y: differential_equations(t, y, sigma_imp, rho_imp, eta, C_d,
-                                                C_h, C_l, R_pl, M_pl, rho_atm0, H),
+                                                C_h, R_pl, M_pl, rho_atm0, H),
         t_span=t_span,
         y0=[vx0, vy0, vz0, M0, x0, y0, z0, R0, Rdot0, 0.],
         method='RK45',
