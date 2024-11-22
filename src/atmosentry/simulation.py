@@ -12,7 +12,8 @@ from .fragments import generate_fragments
 
 class Simulation():
     """
-    This is the atmospheric entry simulation class.
+    This is the atmospheric entry simulation class, which models the entry and (progressive) 
+    fragmentation of a meteoroid during atmospheric entry.
     """
 
     def __init__(self,
@@ -25,8 +26,25 @@ class Simulation():
                  rho0=1.225,
                  H=7.2e3,
                  Nfrag=2,
-                 fragments_track=True
-                 ):
+                 fragments_track=True                 ):
+        """
+        Initializes a new atmospheric entry simulation instance.
+
+        Args:
+        -----
+            t (float): Initial time of the simulation (default is 0)
+            fragments (np.ndarray): Array of fragment objects (default is empty array)
+            Cd (float): Drag coefficient [dimensionless] (default is 0.7).
+            Ch (float): Heat transfer coefficient [dimensionless] (default is 0.02)
+            Mpl (float): Mass of the planet [kg] (default: Earth's mass, 5.97e24)
+            Rpl (float): Radius of the planet [m] (default: Earth's radius, 6371e3)
+            rho0 (float): Atmospheric surface density [kg/m^3] (default: 1.225)
+            H (float): Atmospheric scale height [m] (default: Earth's atmosphere, 7200).
+            Nfrag (int): Number of child meteoroids per fragmentation (default: 2).
+            fragments_track (bool): Fragment tracking during the simulation (default: True)
+            impactor (Meteoroid, optional): The meteoroid object to simulate. 
+                                            (If not provided, the simulation starts empty.)
+        """
 
         self.t = t
         self.fragments = fragments
@@ -42,23 +60,27 @@ class Simulation():
     @property
     def t(self):
         """
-        Docstring
-
+        Getter for simulation time.
+        
         Returns:
-            t: ADD DESCRIPTION
+        --------
+            float: The current simulation time
+
         """
         return self._t
 
     @t.setter
     def t(self, t):
         """
-        Docstring
-
+        Setter for simulation time.
+        
         Args:
-            t (float): ADD DESCRIPTION
+        -----
+            t (float): The simulation time to set
 
         Raises:
-            TypeError: ADD DESCRIPTION
+        -------
+            TypeError: If t is not a float.
         """
         if not isinstance(t, float):
             raise TypeError("Simulation time must be a float.")
@@ -68,23 +90,26 @@ class Simulation():
     @property
     def fragments(self):
         """
-        Docstring
-
+        Getter for the fragments property.
+        
         Returns:
-            fragments: ADD DESCRIPTION
+        --------
+            np.ndarray: The array of Meteoroid fragments.
         """
         return self._fragments
 
     @fragments.setter
     def fragments(self, fragments):
         """
-        Docstring
-
+        Setter for the fragments property.
+        
         Args:
-            fragments (float): ADD DESCRIPTION
-
+        -----
+            fragments (np.ndarray): The array of fragments to set.
+        
         Raises:
-            TypeError: ADD DESCRIPTION
+        -------
+            TypeError: If fragments is not an array of Meteoroid objects.
         """
         if not isinstance(fragments, np.ndarray):
             raise TypeError("Must store fragments as an array.")
@@ -97,23 +122,26 @@ class Simulation():
     @property
     def Cd(self):
         """
-        Docstring
-
+        Getter for the drag coefficient.
+        
         Returns:
-            Cd: ADD DESCRIPTION
+        --------
+            float: The drag coefficient.
         """
         return self._Cd
 
     @Cd.setter
     def Cd(self, Cd):
         """
-        Docstring
-
+        Setter for the drag coefficient.
+        
         Args:
-            C_d (float): ADD DESCRIPTION
-
+        -----
+            Cd (float): The drag coefficient.
+        
         Raises:
-            TypeError: ADD DESCRIPTION
+        -------
+            TypeError: If Cd is not a float.
         """
         if not isinstance(Cd, float):
             raise TypeError("Drag coefficient must be a float.")
@@ -123,23 +151,26 @@ class Simulation():
     @property
     def Ch(self):
         """
-        Docstring
-
+        Getter for the heat transfer coefficient.
+        
         Returns:
-            C_h: ADD DESCRIPTION
+        --------
+            float: The heat transfer coefficient.
         """
         return self._Ch
 
     @Ch.setter
     def Ch(self, Ch):
         """
-        Docstring
-
+        Setter for the heat transfer coefficient.
+        
         Args:
-            C_h (float): ADD DESCRIPTION
-
+        -----
+            Ch (float): The heat transfer coefficient.
+        
         Raises:
-            TypeError: ADD DESCRIPTION
+        -------
+            TypeError: If Ch is not a float.
         """
         if not isinstance(Ch, float):
             raise TypeError("Heat transfer coefficient must be a float.")
@@ -149,23 +180,26 @@ class Simulation():
     @property
     def Mpl(self):
         """
-        Docstring
-
+        Getter for the planet mass.
+        
         Returns:
-            M_pl: ADD DESCRIPTION
+        --------
+            float: The mass of the planet.
         """
         return self._Mpl
 
     @Mpl.setter
     def Mpl(self, Mpl):
         """
-        Docstring
-
+        Setter for the planet mass.
+        
         Args:
-            M_pl (float): ADD DESCRIPTION
-
+        -----
+            Mpl (float): The mass of the planet.
+        
         Raises:
-            TypeError: ADD DESCRIPTION
+        -------
+            TypeError: If Mpl is not a float.
         """
         if not isinstance(Mpl, float):
             raise TypeError("Planet mass must be a float.")
@@ -175,23 +209,26 @@ class Simulation():
     @property
     def Rpl(self):
         """
-        Docstring
-
+        Getter for the planet radius.
+        
         Returns:
-            R_pl: ADD DESCRIPTION
+        --------
+            float: The radius of the planet.
         """
         return self._Rpl
 
     @Rpl.setter
     def Rpl(self, Rpl):
         """
-        Docstring
-
+        Setter for the planet radius.
+        
         Args:
-            R_pl (float): ADD DESCRIPTION
-
+        -----
+            Rpl (float): The radius of the planet.
+        
         Raises:
-            TypeError: ADD DESCRIPTION
+        -------
+            TypeError: If Rpl is not a float.
         """
         if not isinstance(Rpl, float):
             raise TypeError("Planet radius must be a float.")
@@ -201,23 +238,26 @@ class Simulation():
     @property
     def H(self):
         """
-        Docstring
-
+        Getter for the atmospheric scale height.
+        
         Returns:
-            H: ADD DESCRIPTION
+        --------
+            float: The atmospheric scale height.
         """
         return self._H
 
     @H.setter
     def H(self, H):
         """
-        Docstring
-
+        Setter for the atmospheric scale height.
+        
         Args:
-            H (float): ADD DESCRIPTION
-
+        -----
+            H (float): The scale height of the atmosphere.
+        
         Raises:
-            TypeError: ADD DESCRIPTION
+        -------
+            TypeError: If H is not a float.
         """
         if not isinstance(H, float):
             raise TypeError("Atmospheric scale height must be a float.")
@@ -227,23 +267,26 @@ class Simulation():
     @property
     def fragments_track(self):
         """
-        Docstring
-
+        Getter for the fragment tracking status.
+        
         Returns:
-            fragments_track: ADD DESCRIPTION
+        --------
+            bool: Whether fragment tracking is enabled.
         """
         return self._fragments_track
 
     @fragments_track.setter
     def fragments_track(self, fragments_track):
         """
-        Docstring
-
+        Setter for the fragment tracking status.
+        
         Args:
-            fragments_track (float): ADD DESCRIPTION
-
+        -----
+            fragments_track (bool): Whether to enable or disable fragment tracking.
+        
         Raises:
-            TypeError: ADD DESCRIPTION
+        -------
+            TypeError: If fragments_track is not a boolean.
         """
         if not isinstance(fragments_track, bool):
             raise TypeError("Fragment tracking must be a bool.")
@@ -253,23 +296,26 @@ class Simulation():
     @property
     def rho0(self):
         """
-        Docstring
-
+        Getter for the atmospheric surface density.
+        
         Returns:
-            rho0: ADD DESCRIPTION
+        --------
+            float: The atmospheric density at surface level.
         """
         return self._rho0
 
     @rho0.setter
     def rho0(self, rho0):
         """
-        Docstring
-
+        Setter for the atmospheric surface density.
+        
         Args:
-            rho0 (float): ADD DESCRIPTION
-
+        -----
+            rho0 (float): The atmospheric density at surface level.
+        
         Raises:
-            TypeError: ADD DESCRIPTION
+        -------
+            TypeError: If rho0 is not a float.
         """
         if not isinstance(rho0, float):
             raise TypeError("Atmospheric surface density must be a float.")
@@ -279,14 +325,26 @@ class Simulation():
     @property
     def impactor(self):
         """
-        Docstring
+        Getter for the impactor object.
+        
+        Returns:
+        --------
+            Meteoroid: The Meteoroid object representing the impactor.
         """
         return self._impactor
 
     @impactor.setter
     def impactor(self, value):
         """
-        Docstring
+        Setter for the impactor object.
+        
+        Args:
+        -----
+            value (Meteoroid): The impactor object to set.
+        
+        Raises:
+        -------
+            TypeError: If value is not a Meteoroid object.
         """
         if not isinstance(value, Meteoroid):
             raise TypeError("Impactor must be a Meteoroid object.")
@@ -307,7 +365,23 @@ class Simulation():
                          vz: float,
                          t: list):
         """
-        Docstring
+        Updates the attributes of the Meteoroid object.
+
+        Args:
+        -----
+            impactor (Meteoroid): The meteoroid to update.
+            mass (float): The new mass of the meteoroid.
+            radius (float): The new radius of the meteoroid.
+            dM (float): The mass change of the meteoroid.
+            dEkin (float): The kinetic energy change of the meteoroid.
+            x (float): The new x position of the meteoroid.
+            y (float): The new y position of the meteoroid.
+            z (float): The new z position of the meteoroid.
+            vx (float): The new x velocity of the meteoroid.
+            vy (float): The new y velocity of the meteoroid.
+            vz (float): The new z velocity of the meteoroid.
+            t (list): The time array of the simulation 
+                      (inherits from parent body, if exists)
         """
 
         impactor.x = x
@@ -323,6 +397,30 @@ class Simulation():
         impactor.t = t + impactor.t_init
 
     def integrate(self):
+        """
+        Simulates the atmospheric entry and fragmentation of a meteoroid.
+
+        This method performs the following steps:
+        -----------------------------------------
+            1. Simulates the entry of the parent body (`self._impactor`) through the atmosphere.
+            2. Updates the impactor object (position, velocity, mass, etc.) from simulation results.
+            3. If fragment tracking (`self._fragments_track`) is enabled and the meteoroid has not 
+            reached the surface the method generates child fragments.
+            4. Recursively simulates the entry of all child fragments until all fragments reach the
+            surface, or are fully ablated.
+
+        Attributes Updated:
+        -------------------
+            self._t: The simulation time.
+            self._fragments: An array of all fragments generated during the simulation
+                            (including their state vectors)
+            self._impactor: The final state vector of the main meteoroid.
+
+        Outputs:
+        --------
+            Prints real-time progress updates to the console, including the meteoroid radius and the
+            number of fragments in the Simulation object.
+        """
 
         t, mass, radius, dM, dEkin, x, y, z, vx, vy, vz, _ =\
             run(self._impactor,
