@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip install pylint
+        pip3 install --force-reinstall pylint
     - name: Analysing the code with pylint
       run: |
         pylint --rcfile=.pylintrc $(git ls-files '*.py')
