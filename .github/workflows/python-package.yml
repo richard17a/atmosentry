@@ -28,6 +28,7 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         pip install pytest
+        pip3 install --force-reinstall pylint
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install atmosentry package
       run: |
@@ -35,3 +36,8 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: Analysing the code with pylint
+      run: |
+        pylint tests/
+        pylint src/ 
+        pylint setup.py
