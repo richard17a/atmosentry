@@ -9,6 +9,7 @@ and dynamic state of a meteoroid entering a planetary atmosphere.
 
 At some point should come back and check the correct types in setters/getters....
 """
+import numpy as np
 
 
 class Meteoroid():
@@ -103,7 +104,11 @@ class Meteoroid():
     @x.setter
     def x(self, value):
         """Setter for the meteoroid's x-coordinate."""
-        self._x = value
+
+        if not isinstance(value, (float, int, np.ndarray)):
+            raise TypeError()
+        else:
+            self._x = value
 
     @property
     def y(self):
@@ -113,7 +118,11 @@ class Meteoroid():
     @y.setter
     def y(self, value):
         """Setter for the meteoroid's y-coordinate."""
-        self._y = value
+
+        if not isinstance(value, (float, int, np.ndarray)):
+            raise TypeError()
+        else:
+            self._y = value
 
     @property
     def z(self):
@@ -123,7 +132,11 @@ class Meteoroid():
     @z.setter
     def z(self, value):
         """Setter for the meteoroid's z-coordinate."""
-        self._z = value
+
+        if not isinstance(value, (float, int, np.ndarray)):
+            raise TypeError()
+        else:
+            self._z = value
 
     @property
     def vx(self):
@@ -133,7 +146,11 @@ class Meteoroid():
     @vx.setter
     def vx(self, value):
         """Setter for the meteoroid's velocity in the x-direction."""
-        self._vx = value
+
+        if not isinstance(value, (float, int, np.ndarray)):
+            raise TypeError()
+        else:
+            self._vx = value
 
     @property
     def vy(self):
@@ -143,7 +160,11 @@ class Meteoroid():
     @vy.setter
     def vy(self, value):
         """Setter for the meteoroid's velocity in the y-direction."""
-        self._vy = value
+
+        if not isinstance(value, (float, int, np.ndarray)):
+            raise TypeError()
+        else:
+            self._vy = value
 
     @property
     def vz(self):
@@ -153,7 +174,11 @@ class Meteoroid():
     @vz.setter
     def vz(self, value):
         """Setter for the meteoroid's velocity in the z-direction."""
-        self._vz = value
+
+        if not isinstance(value, (float, int, np.ndarray)):
+            raise TypeError()
+        else:
+            self._vz = value
 
     @property
     def radius(self):
