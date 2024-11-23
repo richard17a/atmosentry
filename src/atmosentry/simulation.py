@@ -367,6 +367,8 @@ class Simulation():
         """
         Updates the attributes of the Meteoroid object.
 
+        THERE ARE NO CHECKS GOING ON HERE CURRENTLY...
+
         Args:
         -----
             impactor (Meteoroid): The meteoroid to update.

@@ -8,6 +8,9 @@ This module defines the Meteoroid class, which contains the physical properties,
 and dynamic state of a meteoroid entering a planetary atmosphere. 
 
 At some point should come back and check the correct types in setters/getters....
+
+I THINK THERE WILL ALSO BE A PROBLEM HERE: WE SHOULD NOT ALLOW USERS TO SET ARRAYS AS X,Y,Z 
+ETC. - BUT THIS IS SOMETHING THE CODE DOES DO....
 """
 import numpy as np
 
