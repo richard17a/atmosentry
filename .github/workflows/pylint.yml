@@ -18,8 +18,14 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         pip3 install --force-reinstall pylint
-    - name: Debug repository content
-      run: ls -la
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install atmosentry package
+      run: |
+        pip install -e .
     - name: Analysing the code with pylint
       run: |
         pylint tests/ src/ setup.py
