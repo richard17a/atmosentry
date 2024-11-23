@@ -6,8 +6,8 @@ Add docstring...
 
 import numpy as np
 from atmosentry.meteoroid import Meteoroid
-from .integrator import run
-from .fragments import generate_fragments
+from atmosentry.integrator import run
+from atmosentry.fragments import generate_fragments
 
 
 class Simulation():
