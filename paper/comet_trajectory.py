@@ -196,6 +196,7 @@ ax4.set_xscale('log')
 ax4.set_xlim(1e-3, 2)
 ax4.set_yscale('log')
 ax4.set_ylim(1e-1, 100)
+ax4.set_yticks([0.1, 1, 10, 100], labels=[0.1, 1, 10, 100])
 ax4.set_xlabel(r'Cumulative mass loss [$M_0$]', fontsize=13)
 ax4.set_ylabel('Altitude [km]', fontsize=13)
 ax4.minorticks_on()
@@ -204,12 +205,15 @@ ax5.set_xscale('log')
 ax5.set_xlim(1e-3, 2)
 ax5.set_yscale('log')
 ax5.set_ylim(1e-1, 100)
+ax5.set_yticks([0.1, 1, 10, 100], labels=[0.1, 1, 10, 100])
 ax5.set_xlabel(r'Cumulative energy deposition [$E_0$]', fontsize=13)
 ax5.set_ylabel('Altitude [km]', fontsize=13)
 ax5.minorticks_on()
 
 ax6.minorticks_on()
-ax6.set_ylim(0, 60)
+ax6.set_yscale('log')
+ax6.set_ylim(1e-1, 100)
+ax6.set_yticks([0.1, 1, 10, 100], labels=[0.1, 1, 10, 100])
 ax6.set_xlabel(r'Velocity [km/s]', fontsize=13)
 ax6.set_ylabel(r'Altitude [km]', fontsize=13)
 ax6.legend(frameon=False, loc='upper left')
@@ -223,11 +227,11 @@ axs = [ax1, ax2, ax3, ax4, ax5]
 for p, l in zip(axs, ttt):
     p.annotate(l, xy=(-0., 1.04), xycoords="axes fraction", fontsize=10, weight='bold')
 
-with PdfPages('./paper/figures/comet_trajectory_gallery.pdf') as pdf:
-    pdf.savefig(fig, bbox_inches='tight', )
+# with PdfPages('./paper/figures/comet_trajectory_gallery.pdf') as pdf:
+#     pdf.savefig(fig, bbox_inches='tight', )
 
 
-with PdfPages('./paper/figures/chyba_comparison.pdf') as pdf:
-    pdf.savefig(fig6, bbox_inches='tight', )
+# with PdfPages('./paper/figures/chyba_comparison.pdf') as pdf:
+#     pdf.savefig(fig6, bbox_inches='tight', )
 
 plt.show()
