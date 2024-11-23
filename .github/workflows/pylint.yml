@@ -20,4 +20,4 @@ jobs:
         pip3 install --force-reinstall pylint
     - name: Analysing the code with pylint
       run: |
-        pylint --rcfile=.pylintrc $(git ls-files '*.py')
+        pylint --rcfile=./.pylintrc $(git ls-files '*.py')
