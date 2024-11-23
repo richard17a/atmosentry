@@ -110,8 +110,7 @@ class Meteoroid():
 
         if not isinstance(value, (float, int, np.ndarray)):
             raise TypeError()
-        else:
-            self._x = value
+        self._x = value
 
     @property
     def y(self):
@@ -124,8 +123,7 @@ class Meteoroid():
 
         if not isinstance(value, (float, int, np.ndarray)):
             raise TypeError()
-        else:
-            self._y = value
+        self._y = value
 
     @property
     def z(self):
@@ -138,8 +136,7 @@ class Meteoroid():
 
         if not isinstance(value, (float, int, np.ndarray)):
             raise TypeError()
-        else:
-            self._z = value
+        self._z = value
 
     @property
     def vx(self):
@@ -152,8 +149,7 @@ class Meteoroid():
 
         if not isinstance(value, (float, int, np.ndarray)):
             raise TypeError()
-        else:
-            self._vx = value
+        self._vx = value
 
     @property
     def vy(self):
@@ -166,8 +162,7 @@ class Meteoroid():
 
         if not isinstance(value, (float, int, np.ndarray)):
             raise TypeError()
-        else:
-            self._vy = value
+        self._vy = value
 
     @property
     def vz(self):
@@ -180,8 +175,7 @@ class Meteoroid():
 
         if not isinstance(value, (float, int, np.ndarray)):
             raise TypeError()
-        else:
-            self._vz = value
+        self._vz = value
 
     @property
     def radius(self):

@@ -1,9 +1,9 @@
 # pylint: disable=C0103
 
 """
-This module contains the integrator used to simulate the atmospheric trajectory of a meteoroid through
-the atmosphere, including the effects of drag, mass loss due to ablation, deformation, and 
-fragmentation.
+This module contains the integrator used to simulate the atmospheric trajectory of a meteoroid 
+through the atmosphere, including the effects of drag, mass loss due to ablation, deformation, 
+and fragmentation.
 """
 
 import numpy as np
