@@ -216,7 +216,7 @@ ax6.set_ylim(1e-1, 100)
 ax6.set_yticks([0.1, 1, 10, 100], labels=[0.1, 1, 10, 100])
 ax6.set_xlabel(r'Velocity [km/s]', fontsize=13)
 ax6.set_ylabel(r'Altitude [km]', fontsize=13)
-ax6.legend(frameon=False, loc='upper left')
+ax6.legend(frameon=False, loc=(0.1, 0.03))
 
 
 fig.tight_layout()
