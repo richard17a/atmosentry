@@ -1,5 +1,6 @@
 # pylint: disable=C0103
 # pylint: disable=W0102
+# pylint: disable=R0903
 
 """
 Module: meteoroid
@@ -48,7 +49,7 @@ class MeteoroidState():
         self.dM = dM
         self.dEkin = dEkin
         self.t = t
-    
+
     def update(self,
                x,
                y,
