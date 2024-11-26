@@ -382,7 +382,7 @@ class Meteoroid():
     @mass.setter
     def mass(self, value):
         """
-        Setter for the meteoroid's mass. SHOULD check this is consistent with density, radius (ValueError)
+        Setter for the meteoroid's mass.
         """
 
         if not isinstance(value, (float, int)) or isinstance(value, bool):

@@ -136,7 +136,7 @@ def test_meteoroid_state_update(param_name, invalid_value):
                          sigma=1e4,
                          rho=0.6e3,
                          eta=2.5e6)
-    
+
     valid_values = {
         'x': np.linspace(0, 1, 1000),
         'y': np.linspace(0, 1, 1000),

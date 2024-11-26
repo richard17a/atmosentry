@@ -6,3 +6,6 @@ max-locals = 50
 max-args = 20
 max-positional-arguments = 20
 max-attributes = 50
+
+[MESSAGES CONTROL]
+disable=R0801
