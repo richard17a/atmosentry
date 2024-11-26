@@ -15,6 +15,91 @@ ETC. - BUT THIS IS SOMETHING THE CODE DOES DO....
 import numpy as np
 
 
+class MeteoroidState():
+    """
+    Docstring
+    """
+
+    def __init__(self,
+                 x=None,
+                 y=None,
+                 z=None,
+                 vx=None,
+                 vy=None,
+                 vz=None,
+                 radius=None,
+                 mass=None,
+                 dM=None,
+                 dEkin=None,
+                 t=None
+                 ):
+        """
+        Docstring - NEED TO ADD GETTERS AT SOME POINT SOON!
+        """
+
+        self.x = x
+        self.y = y
+        self.z = z
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+        self.radius = radius
+        self.mass = mass
+        self.dM = dM
+        self.dEkin = dEkin
+        self.t = t
+    
+    def update(self,
+               x,
+               y,
+               z,
+               vx,
+               vy,
+               vz,
+               radius,
+               mass,
+               dM,
+               dEkin,
+               t):
+        """
+        Docstring
+        """
+        if not isinstance(x, np.ndarray):
+            raise TypeError(f"x must be of type np.ndarray, not {type(x).__name__}")
+        if not isinstance(y, np.ndarray):
+            raise TypeError(f"y must be of type np.ndarray, not {type(y).__name__}")
+        if not isinstance(z, np.ndarray):
+            raise TypeError(f"z must be of type np.ndarray, not {type(z).__name__}")
+        if not isinstance(vx, np.ndarray):
+            raise TypeError(f"vx must be of type np.ndarray, not {type(vx).__name__}")
+        if not isinstance(vy, np.ndarray):
+            raise TypeError(f"vy must be of type np.ndarray, not {type(vy).__name__}")
+        if not isinstance(vz, np.ndarray):
+            raise TypeError(f"vz must be of type np.ndarray, not {type(vz).__name__}")
+        if not isinstance(radius, np.ndarray):
+            raise TypeError(f"radius must be of type np.ndarray, not {type(radius).__name__}")
+        if not isinstance(mass, np.ndarray):
+            raise TypeError(f"mass must be of type np.ndarray, not {type(mass).__name__}")
+        if not isinstance(dM, np.ndarray):
+            raise TypeError(f"dM must be of type np.ndarray, not {type(dM).__name__}")
+        if not isinstance(dEkin, np.ndarray):
+            raise TypeError(f"dEkin must be of type np.ndarray, not {type(dEkin).__name__}")
+        if not isinstance(t, np.ndarray):
+            raise TypeError(f"t must be of type np.ndarray, not {type(t).__name__}")
+
+        self.x = x
+        self.y = y
+        self.z = z
+        self.vx = vx
+        self.vy = vy
+        self.vz = vz
+        self.radius = radius
+        self.mass = mass
+        self.dM = dM
+        self.dEkin = dEkin
+        self.t = t
+
+
 class Meteoroid():
     """
     Describes the physical properties, and trajectory of a meteoroid during atmospheric
@@ -53,11 +138,9 @@ class Meteoroid():
                  sigma,
                  rho,
                  eta,
-                 dM=None,
-                 dEkin=None,
                  children=False,
                  t_init=0,
-                 t=[]):
+                 state=None):
         """
         Initializes a Meteoroid object with the given physical properties and initial state.
 
@@ -82,6 +165,9 @@ class Meteoroid():
 
         """
 
+        if state is None:
+            state = MeteoroidState()
+
         self.x = x
         self.y = y
         self.z = z
@@ -93,11 +179,9 @@ class Meteoroid():
         self.sigma = sigma
         self.rho = rho
         self.eta = eta
-        self.dM = dM
-        self.dEkin = dEkin
         self.children = children
         self.t_init = t_init
-        self.t = t
+        self.state = state
 
     @property
     def x(self):
@@ -228,26 +312,6 @@ class Meteoroid():
         self._eta = value
 
     @property
-    def dM(self):
-        """Getter for the meteoroid's mass loss rate."""
-        return self._dM
-
-    @dM.setter
-    def dM(self, value):
-        """Setter for the meteoroid's mass loss rate."""
-        self._dM = value
-
-    @property
-    def dEkin(self):
-        """Getter for the meteoroid's energy loss rate."""
-        return self._dEkin
-
-    @dEkin.setter
-    def dEkin(self, value):
-        """Setter for the meteoroid's energy loss rate."""
-        self._dEkin = value
-
-    @property
     def children(self):
         """Getter for the meteoroid's children fragments status."""
         return self._children
@@ -266,13 +330,3 @@ class Meteoroid():
     def t_init(self, value):
         """Setter for the meteoroid's initial time."""
         self._t_init = value
-
-    @property
-    def t(self):
-        """Getter for the meteoroid's simulation time."""
-        return self._t
-
-    @t.setter
-    def t(self, value):
-        """Setter for the meteoroid's simulation time."""
-        self._t = value

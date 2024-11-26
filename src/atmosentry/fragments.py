@@ -114,22 +114,26 @@ def generate_fragments(fragment: Meteoroid,
         A list of `Meteoroid` objects corresponding to the child fragments.
     """
 
-    vx, vy, vz = fragment.vx, fragment.vy, fragment.vz
-    x, y, z = fragment.x, fragment.y, fragment.z
-    mass = fragment.mass
-    theta = np.arctan(fragment.vz / fragment.vx)
+    # vx, vy, vz = fragment.vx, fragment.vy, fragment.vz
+    # x, y, z = fragment.x, fragment.y, fragment.z
+    # mass = fragment.mass
+    # theta = np.arctan(fragment.vz / fragment.vx)
+
+    vx, vy, vz = fragment.state.vx, fragment.state.vy, fragment.state.vz
+    x, y, z = fragment.state.x, fragment.state.y, fragment.state.z
+    theta = np.arctan(fragment.state.vz / fragment.state.vx)
 
     rho_m = fragment.rho
 
     velocity = np.sqrt(vx ** 2 + vy ** 2 + vz ** 2)
 
-    masses = gen_fragment_masses(mass[-1], N_frag)
+    masses = gen_fragment_masses(fragment.state.mass[-1], N_frag)
 
     v_alpha, v_beta = calc_fragment_velocities(rho_atm * np.exp(-z[-1]/H),
-                                               rho_m, velocity[-1], mass[-1],
+                                               rho_m, velocity[-1], fragment.state.mass[-1],
                                                masses)
 
-    h_final = mass[-1] / (rho_m * np.pi * fragment.radius[-1] ** 2)
+    h_final = fragment.state.mass[-1] / (rho_m * np.pi * fragment.state.radius[-1] ** 2)
 
     fragments = []
     for counter, mass in enumerate(masses):
@@ -144,7 +148,7 @@ def generate_fragments(fragment: Meteoroid,
                          vx=v_frag_x, vy=v_frag_y, vz=v_frag_z,
                          radius=r_frag, mass=mass, rho=rho_m,
                          sigma=fragment.sigma, eta=fragment.eta,
-                         t_init=fragment.t[-1])
+                         t_init=fragment.state.t[-1])
 
         fragments = np.append(frag, fragments)
 

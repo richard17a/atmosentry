@@ -351,52 +351,52 @@ class Simulation():
         if isinstance(value, Meteoroid):
             self._impactor = value
 
-    @staticmethod
-    def update_meteoroid(impactor: Meteoroid,
-                         mass: float,
-                         radius: float,
-                         dM: float,
-                         dEkin: float,
-                         x: float,
-                         y: float,
-                         z: float,
-                         vx: float,
-                         vy: float,
-                         vz: float,
-                         t: list):
-        """
-        Updates the attributes of the Meteoroid object.
+    # @staticmethod
+    # def update_meteoroid(impactor: Meteoroid,
+    #                      mass: float,
+    #                      radius: float,
+    #                      dM: float,
+    #                      dEkin: float,
+    #                      x: float,
+    #                      y: float,
+    #                      z: float,
+    #                      vx: float,
+    #                      vy: float,
+    #                      vz: float,
+    #                      t: list):
+    #     """
+    #     Updates the attributes of the Meteoroid object.
 
-        THERE ARE NO CHECKS GOING ON HERE CURRENTLY...
+    #     THERE ARE NO CHECKS GOING ON HERE CURRENTLY...
 
-        Args:
-        -----
-            impactor (Meteoroid): The meteoroid to update.
-            mass (float): The new mass of the meteoroid.
-            radius (float): The new radius of the meteoroid.
-            dM (float): The mass change of the meteoroid.
-            dEkin (float): The kinetic energy change of the meteoroid.
-            x (float): The new x position of the meteoroid.
-            y (float): The new y position of the meteoroid.
-            z (float): The new z position of the meteoroid.
-            vx (float): The new x velocity of the meteoroid.
-            vy (float): The new y velocity of the meteoroid.
-            vz (float): The new z velocity of the meteoroid.
-            t (list): The time array of the simulation 
-                      (inherits from parent body, if exists)
-        """
+    #     Args:
+    #     -----
+    #         impactor (Meteoroid): The meteoroid to update.
+    #         mass (float): The new mass of the meteoroid.
+    #         radius (float): The new radius of the meteoroid.
+    #         dM (float): The mass change of the meteoroid.
+    #         dEkin (float): The kinetic energy change of the meteoroid.
+    #         x (float): The new x position of the meteoroid.
+    #         y (float): The new y position of the meteoroid.
+    #         z (float): The new z position of the meteoroid.
+    #         vx (float): The new x velocity of the meteoroid.
+    #         vy (float): The new y velocity of the meteoroid.
+    #         vz (float): The new z velocity of the meteoroid.
+    #         t (list): The time array of the simulation 
+    #                   (inherits from parent body, if exists)
+    #     """
 
-        impactor.x = x
-        impactor.y = y
-        impactor.z = z
-        impactor.vx = vx
-        impactor.vy = vy
-        impactor.vz = vz
-        impactor.mass = mass
-        impactor.radius = radius
-        impactor.dM = dM
-        impactor.dEkin = dEkin
-        impactor.t = t + impactor.t_init
+    #     impactor.x = x
+    #     impactor.y = y
+    #     impactor.z = z
+    #     impactor.vx = vx
+    #     impactor.vy = vy
+    #     impactor.vz = vz
+    #     impactor.mass = mass
+    #     impactor.radius = radius
+    #     impactor.dM = dM
+    #     impactor.dEkin = dEkin
+    #     impactor.t = t + impactor.t_init
 
     def integrate(self):
         """
@@ -436,10 +436,11 @@ class Simulation():
             )
 
         self._t = t
-        self.update_meteoroid(self._impactor, mass, radius, dM, dEkin, x, y, z, vx, vy, vz, t)
+        # self.update_meteoroid(self._impactor, mass, radius, dM, dEkin, x, y, z, vx, vy, vz, t)
+        self._impactor.state.update(x, y, z, vx, vy, vz, radius, mass, dM, dEkin, t + self._impactor.t_init)
 
         if self._fragments_track:
-            if self._impactor.z[-1] > 1:
+            if self._impactor.state.z[-1] > 1:
                 self._impactor.children = True
 
                 child_fragments = generate_fragments(self._impactor, self.rho0, self.H, self.Nfrag)
@@ -448,7 +449,7 @@ class Simulation():
                     fragments_tmp = []
 
                     for fragment in child_fragments:
-                        print(f'R_0={self._impactor.radius[0]}m, N_frags={len(child_fragments)}',\
+                        print(f'R_0={self._impactor.radius}m, N_frags={len(child_fragments)}',\
                               end='\r', flush=True)
 
                         t_f, mass_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f, _ =\
@@ -461,12 +462,14 @@ class Simulation():
                                 self._H,
                                 N_c=2.
                             )
-                        self.update_meteoroid(fragment, mass_f, radius_f, dM_f, dEkin_f, x_f, y_f,
-                                              z_f, vx_f, vy_f, vz_f, t_f)
+                        # self.update_meteoroid(fragment, mass_f, radius_f, dM_f, dEkin_f, x_f, y_f,
+                        #                       z_f, vx_f, vy_f, vz_f, t_f)
+                        fragment.state.update(x_f, y_f, z_f, vx_f, vy_f, vz_f, radius_f, mass_f, dM_f,
+                                              dEkin_f, t_f + fragment.t_init)
 
                         if z_f[-1] < 1:
                             self._fragments = np.append(self._fragments, fragment)
-                        elif mass_f[-1] < 0.005 * self._impactor.mass[0]:
+                        elif mass_f[-1] < 0.005 * self._impactor.state.mass[0]:
                             mass_f = np.append(mass_f, mass_f[-1])
                             radius_f = np.append(radius_f, radius_f[-1])
                             x_f = np.append(x_f, x_f[-1])
@@ -481,8 +484,10 @@ class Simulation():
                             dM_f = np.append(dM_f, mass_f[-1])
                             dEkin_f = np.append(dEkin_f, 0.5 * mass_f[-1] * vel)
 
-                            self.update_meteoroid(fragment, mass_f, radius_f, dM_f, dEkin_f,
-                                                  x_f, y_f, z_f, vx_f, vy_f, vz_f, t_f)
+                            # self.update_meteoroid(fragment, mass_f, radius_f, dM_f, dEkin_f,
+                            #                       x_f, y_f, z_f, vx_f, vy_f, vz_f, t_f)
+                            fragment.state.update(x_f, y_f, z_f, vx_f, vy_f, vz_f, radius_f,
+                                                  mass_f, dM_f, dEkin_f, t_f + fragment.t_init)
                             self._fragments = np.append(self._fragments, fragment)
 
                         else:
