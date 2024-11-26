@@ -45,7 +45,7 @@ def test_simulation_default_imapctor():
     sim = Simulation()
 
     with pytest.raises(AttributeError):
-        sim.impactor
+        assert sim.impactor
 
 
 def test_simulation_impactor():
