@@ -40,7 +40,7 @@ def test_meteoroid():
     'x', 'y', 'z', 'vx', 'vy', 'vz', 'radius', 'mass', 'sigma', 'rho', 'eta'
 ])
 @pytest.mark.parametrize("invalid_value", [
-    'string', [1, 2, 3], False, np.array([1,2,3])
+    'string', [1, 2, 3], False, np.array([1,2,3]), (1, 2)
 ])
 def test_meteoroid_setters(param_name, invalid_value):
     """
@@ -65,7 +65,7 @@ def test_meteoroid_setters(param_name, invalid_value):
 
 
 @pytest.mark.parametrize("invalid_value", [
-    'string', [1, 2, 3], 0., 0, np.array([1,2,3])
+    'string', [1, 2, 3], 0., 0, np.array([1,2,3]), (1, 2)
 ])
 def test_meteoroid_setter_children(invalid_value):
     """
@@ -91,7 +91,7 @@ def test_meteoroid_setter_children(invalid_value):
     'x', 'y', 'z', 'vx', 'vy', 'vz', 'radius', 'mass', 'dM', 'dEkin', 'dt'
 ])
 @pytest.mark.parametrize("invalid_value", [
-    'string', [1, 2, 3], 0., 0, np.array([1,2,3])
+    'string', [1, 2, 3], 0., 0, np.array([1,2,3]), (1, 2)
 ])
 def test_meteoroid_state(param_name, invalid_value):
     """
@@ -118,7 +118,7 @@ def test_meteoroid_state(param_name, invalid_value):
     'x', 'y', 'z', 'vx', 'vy', 'vz', 'radius', 'mass', 'dM', 'dEkin', 't'
 ])
 @pytest.mark.parametrize("invalid_value", [
-    'string', [1, 2, 3], False, 0, 0.
+    'string', [1, 2, 3], False, 0, 0., (1, 2),
 ])
 def test_meteoroid_state_update(param_name, invalid_value):
     """

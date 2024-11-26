@@ -16,6 +16,7 @@ def test_simulation():
     """
 
     sim = Simulation()
+
     assert sim
     assert sim.t == 0
     assert sim.Cd == 0.7
@@ -51,8 +52,13 @@ def test_simulation_impactor():
     assert sim.impactor == impactor
 
 
-@pytest.mark.parametrize("invalid_value", [0])
-def test_simulation_setters(invalid_value):
+@pytest.mark.parametrize("param_name", [
+    't', 'Cd', 'Ch', 'Mpl', 'Rpl', 'H', 'rho0', 'impactor'
+])
+@pytest.mark.parametrize("invalid_value", [
+    0, [1, 2, 3], 'string', False, np.array([1, 2, 3]), (1, 2)
+    ])
+def test_simulation_setters(param_name, invalid_value):
     """
     Docstring
     """
@@ -60,17 +66,12 @@ def test_simulation_setters(invalid_value):
     sim = Simulation()
 
     with pytest.raises(TypeError):
-        sim.t = invalid_value
-        sim.Cd = invalid_value
-        sim.Ch = invalid_value
-        sim.Mpl = invalid_value
-        sim.Rpl = invalid_value
-        sim.H = invalid_value
-        sim.rho0 = invalid_value
-        sim.impactor = invalid_value
+        setattr(sim, param_name, invalid_value)
 
 
-@pytest.mark.parametrize("invalid_value", [0, 'string', [1, 2, 3]])
+@pytest.mark.parametrize("invalid_value", [
+    0, 0., 'string', [1, 2, 3], (1, 2), np.array([1, 2, 3])
+    ])
 def test_simulation_setters_bool(invalid_value):
     """
     Docstring
@@ -82,29 +83,32 @@ def test_simulation_setters_bool(invalid_value):
         sim.fragments_track = invalid_value
 
 
-def test_simulation_setters_fragments():
+@pytest.mark.parametrize("invalid_value", [
+    [1, 2, 3],
+    np.array([1, 2, 3]),
+    'impactor',
+    False,
+    0,
+    0.,
+    (1, 2),
+    Meteoroid(x=0,
+              y=0,
+              z=100e3,
+              vx=-20e3 * np.cos(45 * np.pi / 180),
+              vy=0,
+              vz=-20e3 * np.sin(45 * np.pi / 180),
+              radius=150,
+              mass=0.6e3 * (4 * np.pi / 3) * (150 ** 3),
+              sigma=1e4,
+              rho=0.6e3,
+              eta=2.5e6)
+])
+def test_simulation_setters_fragments(invalid_value):
     """
     Docstring
     """
 
     sim = Simulation()
 
-    impactor = Meteoroid(x=0,
-                          y=0,
-                          z=100e3,
-                          vx=-20e3 * np.cos(45 * np.pi / 180),
-                          vy=0,
-                          vz=-20e3 * np.sin(45 * np.pi / 180),
-                          radius=150,
-                          mass=0.6e3 * (4 * np.pi / 3) * (150 ** 3),
-                          sigma=1e4,
-                          rho=0.6e3,
-                          eta=2.5e6)
-
     with pytest.raises(TypeError):
-        sim.fragments = impactor
-        sim.fragments = [impactor]
-        sim.fragments = [1, 2, 3]
-        sim.fragments = np.array([1, 2, 3])
-        sim.fragments = np.array([1, 2, 3, impactor])
-        sim.fragments = 'impactor'
+        sim.fragments = invalid_value
