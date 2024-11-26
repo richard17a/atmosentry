@@ -114,11 +114,6 @@ def generate_fragments(fragment: Meteoroid,
         A list of `Meteoroid` objects corresponding to the child fragments.
     """
 
-    # vx, vy, vz = fragment.vx, fragment.vy, fragment.vz
-    # x, y, z = fragment.x, fragment.y, fragment.z
-    # mass = fragment.mass
-    # theta = np.arctan(fragment.vz / fragment.vx)
-
     vx, vy, vz = fragment.state.vx, fragment.state.vy, fragment.state.vz
     x, y, z = fragment.state.x, fragment.state.y, fragment.state.z
     theta = np.arctan(fragment.state.vz / fragment.state.vx)
