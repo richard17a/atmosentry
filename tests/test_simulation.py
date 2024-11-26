@@ -10,23 +10,42 @@ from atmosentry.meteoroid import Meteoroid
 from atmosentry import Simulation
 
 
-def test_simulation():
+@pytest.mark.parametrize("param_name", [
+    't', 'Cd', 'Ch', 'Mpl', 'Rpl', 'H', 'rho0', 'dt', 'Nfrag', 'fragments_track'
+])
+def test_simulation(param_name):
+    """
+    Docstring
+    """
+
+    sim = Simulation()
+    assert sim
+
+    valid_attrs = {
+        't': 0,
+        'Cd': 0.7,
+        'Ch': 0.02,
+        'Mpl': 5.97e24,
+        'Rpl': 6371e3,
+        'H': 7.2e3,
+        'rho0': 1.225,
+        'dt': 1e-2,
+        'Nfrag': 2,
+        'fragments_track': True
+    }
+
+    assert getattr(sim, param_name) == valid_attrs[param_name]
+
+
+def test_simulation_default_imapctor():
     """
     Docstring
     """
 
     sim = Simulation()
 
-    assert sim
-    assert sim.t == 0
-    assert sim.Cd == 0.7
-    assert sim.Ch == 0.02
-    assert sim.Mpl == 5.97e24
-    assert sim.Rpl == 6371e3
-    assert sim.rho0 == 1.225
-    assert sim.H == 7.2e3
-    assert sim.Nfrag == 2
-    assert sim.fragments_track is True
+    with pytest.raises(AttributeError):
+        sim.impactor
 
 
 def test_simulation_impactor():
