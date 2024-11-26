@@ -187,6 +187,7 @@ def run(impactor: Meteoroid,
         M_pl: float,
         rho_atm0: float,
         H: float,
+        dt: float,
         N_c=2.):
     """
     Runs the numerical integration to calculate the meteoroid's atmospheric trajectory,
@@ -211,6 +212,8 @@ def run(impactor: Meteoroid,
         Atmospheric surface density [kg/m^3]
     H : float
         Atmospheric scale height [m]
+    dt : float
+        Simulation (maximum) timestep [s]
     N_c : float, optional
         The critical number of Rayleigh-Taylor growth timescale (default: 2)
 
@@ -278,7 +281,7 @@ def run(impactor: Meteoroid,
         method='RK45',
         dense_output=True,
         events=events,
-        max_step=1e-2
+        max_step=dt
     )
 
     t = sol_iso.t

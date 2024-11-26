@@ -26,7 +26,9 @@ class Simulation():
                  rho0=1.225,
                  H=7.2e3,
                  Nfrag=2,
-                 fragments_track=True                 ):
+                 fragments_track=True,
+                 dt=1e-2
+                 ):
         """
         Initializes a new atmospheric entry simulation instance.
 
@@ -42,6 +44,7 @@ class Simulation():
             H (float): Atmospheric scale height [m] (default: Earth's atmosphere, 7200).
             Nfrag (int): Number of child meteoroids per fragmentation (default: 2).
             fragments_track (bool): Fragment tracking during the simulation (default: True)
+            dt (float): Simulation (maximum) timestep [s] (default: 1e-2)
             impactor (Meteoroid, optional): The meteoroid object to simulate. 
                                             (If not provided, the simulation starts empty.)
         """
@@ -56,6 +59,7 @@ class Simulation():
         self.H=H
         self.Nfrag = Nfrag
         self.fragments_track = fragments_track
+        self.dt = dt
 
     @property
     def t(self):
@@ -323,6 +327,35 @@ class Simulation():
             self._rho0 = rho0
 
     @property
+    def dt(self):
+        """
+        Getter for the simulation (maximum) timstep.
+        
+        Returns:
+        --------
+            float: The simulation (maximum) timstep.
+        """
+        return self._dt
+
+    @dt.setter
+    def dt(self, dt):
+        """
+        Setter for the simulation (maximum) timstep.
+        
+        Args:
+        -----
+            dt (float): The simulation (maximum) timstep.
+        
+        Raises:
+        -------
+            TypeError: If dt is not a float.
+        """
+        if not isinstance(dt, float):
+            raise TypeError("Simulation timestep must be a float.")
+        if isinstance(dt, float):
+            self._dt = dt
+
+    @property
     def impactor(self):
         """
         Getter for the impactor object.
@@ -385,7 +418,8 @@ class Simulation():
                         self._Mpl,
                         self._rho0,
                         self._H,
-                        N_c=2.
+                        self._dt,
+                        N_c=2.,
             )
 
         self._t = t
@@ -413,6 +447,7 @@ class Simulation():
                                 self._Mpl,
                                 self._rho0,
                                 self._H,
+                                self._dt,
                                 N_c=2.
                             )
 
