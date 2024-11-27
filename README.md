@@ -5,3 +5,18 @@
 [![Python 3.10](https://img.shields.io/badge/python-3.10-green.svg)](https://www.python.org/downloads/release/python-360/)
 
 # atmosentry
+
+atmosentry is a numerical integrator package that simulates the atmospheric entry of cometary impactors. 
+
+## Setup
+
+- Install the Github repository (git clone git@github.com:richard17a/atmosentry.git)
+- Navigate to the project directory (/atmosentry)
+- Install required packages
+    - pip3 install -r requirements.txt
+- Install the package
+    - pip3 install .
+
+## How to use atmosentry
+
+The sub-directory [examples/](./examples/) contains several ipython notebooks to demonstrate the basic functionality of atmosentry.
