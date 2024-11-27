@@ -10,7 +10,7 @@ atmosentry is a numerical integrator package that simulates the atmospheric entr
 
 ## Setup
 
-- Install the Github repository (git clone git@github.com:richard17a/atmosentry.git)
+- Install the Github repository (git clone [git@github.com:richard17a/atmosentry.git](git@github.com:richard17a/atmosentry.git))
 - Navigate to the project directory (/atmosentry)
 - Install required packages
     - pip3 install -r requirements.txt
@@ -19,4 +19,4 @@ atmosentry is a numerical integrator package that simulates the atmospheric entr
 
 ## How to use atmosentry
 
-The sub-directory [examples/](./examples/) contains several ipython notebooks to demonstrate the basic functionality of atmosentry.
+The [examples/](./examples/) sub-directory contains several ipython notebooks to demonstrate the basic functionality of atmosentry.
