@@ -6,7 +6,7 @@
 
 # atmosentry
 
-atmosentry is a numerical integrator package that simulates the atmospheric entry of cometary impactors. 
+atmosentry is a numerical integrator that simulates the atmospheric entry of cometary impactors. 
 
 ## Setup
 
