@@ -10,7 +10,7 @@ atmosentry is a numerical integrator that simulates the atmospheric entry of com
 
 ## Setup
 
-- Install the Github repository (git clone [git@github.com:richard17a/atmosentry.git](git@github.com:richard17a/atmosentry.git))
+- Clone the Github repository
 - Navigate to the project directory (/atmosentry)
 - Install required packages
     - pip3 install -r requirements.txt
