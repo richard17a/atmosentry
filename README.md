@@ -6,7 +6,7 @@
 
 # atmosentry
 
-atmosentry is a numerical integrator that simulates the atmospheric entry of cometary impactors. 
+atmosentry is a numerical integrator that simulates the atmospheric entry of comets. For full description of the numerical model see [this article](https://). Key details are described below, focussing primarily on free model parameters.
 
 ## Setup
 
@@ -19,4 +19,13 @@ atmosentry is a numerical integrator that simulates the atmospheric entry of com
 
 ## How to use atmosentry
 
-The [examples/](./examples/) sub-directory contains several ipython notebooks to demonstrate the basic functionality of atmosentry.
+The [examples/](./examples/) sub-directory contains several ipython notebooks that demonstrate the basic functionality of atmosentry.
+
+
+## Model description
+
+atmosentry includes specific semi-analytical prescriptions for the ablation, deformation, and fragmentation of comets as they travel through the atmosphere.
+
+### mass ablation
+
+mass loss due to ablation is described by the classical Bronshten 1983 par
