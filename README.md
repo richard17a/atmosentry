@@ -6,7 +6,8 @@
 
 # atmosentry
 
-atmosentry is a numerical integrator that simulates the atmospheric entry of comets. For full description of the numerical model see [this article](https://). Key details are described below, focussing primarily on free model parameters.
+atmosentry is a numerical integrator that simulates the atmospheric entry of comets. For full description of the numerical model see [this article](https://). 
+Key details are described below, focussing primarily on free model parameters.
 
 ## Setup
 
@@ -29,20 +30,36 @@ atmosentry includes specific semi-analytical prescriptions for the ablation, def
 
 ### atmospheric deceleration
 
-Assuming the comet arrives at the top of the atmosphere at an initial angle $\theta$ wrt. the local horizontal, and velocity $\mathbf{v}=(v_x,v_y,v_z)$, its deceleration is given by
-$$m\dfrac{d\mathbf{v}}{dt} = -\dfrac{1}{2}C_D\rho_{\rm atm}(z)A|\mathbf{v}|\mathbf{v} -g(z)\mathbf{\hat{e}}_z,$$
+Assuming the comet arrives at the top of the atmosphere at an initial angle $\theta$ wrt. the local horizontal, and velocity $\mathbf{v}=(v_x,v_y,v_z)$, 
+its deceleration is given by
+```math
+m\dfrac{d\mathbf{v}}{dt} = -\dfrac{1}{2}C_D\rho_{\rm atm}(z)A|\mathbf{v}|\mathbf{v} -g(z)\mathbf{\hat{e}}_z,
+```
 where $C_D$ is the comet's drag coefficient, which is left as a free parameter. The comet's position is tracked through the atmosphere, and evolves as
-$$\dfrac{d\mathbf{x}}{dt} = \mathbf{v}.$$
+```math
+\dfrac{d\mathbf{x}}{dt} = \mathbf{v}.
+```
 
 As isothermal atmospheric profile is assumed with scale height $H$,
-$$\rho_{\rm atm} = \rho_{\rm atm,0}\exp{\left(-\dfrac{z}{H}\right)},$$
+```math
+\rho_{\rm atm} = \rho_{\rm atm,0}\exp{\left(-\dfrac{z}{H}\right)},
+```
 where the surface atmospheric density $\rho_{\rm atm, 0}$ is also left as a free parameter.
 
 ### mass ablation
 
-Mass loss due to ablation is described by the classical Bronshten 1983 parameterisation,
-$$\xi\dfrac{dm}{dt} = -A\,\text{min}\left(\dfrac{1}{2}C_H\rho_{\rm atm}v^3,\sigma_{\rm SB}T^4\right),$$
-where $T\simeq25000\,$K is the temperature of the shocked gas at the leading edge of the comet. The heat transfer coefficient ($C_H$) is left as a free parameter.
+Mass loss due to ablation is described by the classical Bronshten (1983) parameterisation,
+```math
+\xi\dfrac{dm}{dt} = -A\,\text{min}\left(\dfrac{1}{2}C_H\rho_{\rm atm}v^3,\sigma_{\rm SB}T^4\right),
+```
+where $T\simeq25000\,$K is the temperature of the shocked gas at the leading edge of the comet. The heat transfer coefficient 
+($C_H$) is left as a free parameter.
 
 
 ### deformation
+
+Given the friable, highly porous nature of cometary impactors, we adopt the progressive fragmentation described in Chyba et al., (1993), 
+in which the comet deforms into a cylinder of height $h=m/(\pi\rho_mr^2)$. Its radius increases according to
+```math
+r\dfrac{d^2r}{dt^2} = \dfrac{C_D}{2}\left(\dfrac{\rho_{\rm atm}}{\rho_{\rm m}}\right)v^2.
+```
