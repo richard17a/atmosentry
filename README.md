@@ -74,5 +74,5 @@ during fragmentation remains poorly constrained, and is also left as a free para
 ```
 and normalised such that 
 ```math
-\sum{i=1}^n{m_i} = m_{\rm parent}.
+\sum_{i=1}^n{m_i} = m_{\rm parent}.
 ```
