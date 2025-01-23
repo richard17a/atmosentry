@@ -64,7 +64,7 @@ in which the comet deforms into a cylinder of height $h=m/(\pi\rho_mr^2)$. Its r
 r\dfrac{d^2r}{dt^2} = \dfrac{C_D}{2}\left(\dfrac{\rho_{\rm atm}}{\rho_{\rm m}}\right)v^2.
 ```
 
-### fragmentation
+### fragmentation
 
 This deformation will not continue indefinitely, with 3D simulations demonstrating that Rayleigh-Taylor instabilities drive the fragmentation of the comet.
 Comets break-up after $N_{\rm RT}$ Rayleigh-Taylor growth timescales, which is left as a free parameter in the model. The number of fragments ($n$) produced
@@ -74,5 +74,5 @@ during fragmentation remains poorly constrained, and is also left as a free para
 ```
 and normalised such that 
 ```math
-\Sigma_{i=1}^n{m_i} = m_{\rm parent}.
+\sum{i=1}^n{m_i} = m_{\rm parent}.
 ```
