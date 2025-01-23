@@ -7,7 +7,7 @@
 # atmosentry
 
 atmosentry is a numerical integrator that simulates the atmospheric entry of comets. For full description of the numerical model see [this article](https://). 
-Key details are described below, focussing primarily on free model parameters.
+Key details are described below, focussing primarily on free model parameters. If you use this model in any 
 
 ## Setup
 
@@ -52,7 +52,7 @@ Mass loss due to ablation is described by the classical Bronshten (1983) paramet
 ```math
 \xi\dfrac{dm}{dt} = -A\,\text{min}\left(\dfrac{1}{2}C_H\rho_{\rm atm}v^3,\sigma_{\rm SB}T^4\right),
 ```
-where $T\simeq25000\,$K is the temperature of the shocked gas at the leading edge of the comet. The heat transfer coefficient 
+where $T \simeq 25000\,{\rm K}$ is the temperature of the shocked gas at the leading edge of the comet. The heat transfer coefficient 
 ($C_H$) is left as a free parameter.
 
 
@@ -62,4 +62,17 @@ Given the friable, highly porous nature of cometary impactors, we adopt the prog
 in which the comet deforms into a cylinder of height $h=m/(\pi\rho_mr^2)$. Its radius increases according to
 ```math
 r\dfrac{d^2r}{dt^2} = \dfrac{C_D}{2}\left(\dfrac{\rho_{\rm atm}}{\rho_{\rm m}}\right)v^2.
+```
+
+### fragmentation
+
+This deformation will not continue indefinitely, with 3D simulations demonstrating that Rayleigh-Taylor instabilities drive the fragmentation of the comet.
+Comets break-up after $N_{\rm RT}$ Rayleigh-Taylor growth timescales, which is left as a free parameter in the model. The number of fragments ($n$) produced
+during fragmentation remains poorly constrained, and is also left as a free parameter. The masses of child fragments are chosen proportional to a random variable
+```math
+\dfrac{m_i}{m_{\rm parent}} = x, \hspace{1em} \text{where}~x\sim\mathcal{U}[0,1],
+```
+and normalised such that 
+```math
+\Sigma_{i=1}^n{m_i} = m_{\rm parent}.
 ```
