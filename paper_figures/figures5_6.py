@@ -1,13 +1,19 @@
+# pylint: disable=C0103,C0121,E1101
+
+"""
+Script to generate figures 5 and 6 from Anslow+ 2025 (MNRAS, subm.)
+"""
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-import cmcrameri.cm as cm
+from cmcrameri import cm
 from atmosentry.meteoroid import Meteoroid
 from atmosentry import Simulation
 
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
 matplotlib.rcParams['font.family'] = 'STIXGeneral'
+
 
 def set_size(width, fraction=1, subplots=(1, 1)):
     """
@@ -51,8 +57,13 @@ fig_width, fig_height = set_size('thesis')
 
 
 def calc_Dmin(V0, rho_atm, rho_com, theta0=45. * np.pi / 180., R0=20):
+    """
+    Calculate the minimum radius of a meteoroid required to ensure that 
+    at least 75% of its initial mass reaches the Earth's surface after passing 
+    through the atmosphere.
+    """
 
-    M0 = rho_com * (4 * np.pi / 3) * (R0 ** 3) # initial mass of comet
+    M0 = rho_com * (4 * np.pi / 3) * (R0 ** 3)
 
     flag_ = False
     while flag_ == False:
@@ -91,7 +102,10 @@ def calc_Dmin(V0, rho_atm, rho_com, theta0=45. * np.pi / 180., R0=20):
 
 
 def main():
-    
+    """
+    main plotting method
+    """
+
     rho_comets = np.logspace(-1, 1, 5) * 0.6e3
     rho_comets = rho_comets[::-1]
     r_prev = 20
@@ -124,25 +138,30 @@ def main():
 
     ax1.set_xlabel(r'Comet bulk density [$0.6\,{\rm g\,cm}^{-3}$]', fontsize=13, c=cm.bamako(0.2))
     ax1.set_ylabel(r'Minimum diameter [m]', fontsize=13)
-    
+
     ax2 = ax1.twiny()
-    
+
     ax2.plot(rho_atms / 1.225, r_min_atm, marker='.', c=cm.bamako(0.7))
 
     ax2.set_xscale('log')
 
-    ax2.set_xlabel(r'Atmospheric surface density [$1.225\,{\rm kg\,m}^{-3}$]', fontsize=13, c=cm.bamako(0.7))
+    ax2.set_xlabel(r'Atmospheric surface density [$1.225\,{\rm kg\,m}^{-3}$]',
+                   fontsize=13, c=cm.bamako(0.7))
 
     ax1.minorticks_on()
     ax2.minorticks_on()
 
-    # plt.savefig('./paper/figures/minimum_cometary_diameter.pdf', format='pdf', bbox_inches='tight')
+    # plt.savefig('./paper_figures/figures/minimum_cometary_diameter.pdf',
+    #             format='pdf', bbox_inches='tight')
 
     plt.show()
 
 
 def main_angle():
-    
+    """
+    main plotting method
+    """
+
     thetas = np.linspace(5, 90, 10)
     thetas = thetas[::-1]
 
@@ -160,7 +179,8 @@ def main_angle():
     _ = plt.figure(figsize=(fig_width, fig_height))
 
     plt.plot(thetas, r_min, marker='.', c=cm.bamako(0.3), zorder=10)
-    plt.plot(thetas, r_min[0] / np.sin(thetas * np.pi / 180), marker='.', c=cm.bamako(0.6), ls='--', label=r'$D_{\rm min} \mathrm{cosec}{\theta}$', zorder=0)
+    plt.plot(thetas, r_min[0] / np.sin(thetas * np.pi / 180), marker='.',
+             c=cm.bamako(0.6), ls='--', label=r'$D_{\rm min} \mathrm{cosec}{\theta}$', zorder=0)
 
     plt.yscale('log')
 
@@ -172,7 +192,8 @@ def main_angle():
 
     plt.minorticks_on()
 
-    plt.savefig('./paper/figures/minimum_cometary_diameter_angles.pdf', format='pdf', bbox_inches='tight')
+    plt.savefig('./paper/figures/minimum_cometary_diameter_angles.pdf',
+                format='pdf', bbox_inches='tight')
 
     plt.show()
 

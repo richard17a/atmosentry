@@ -1,9 +1,13 @@
+# pylint: disable=C0103
+
+"""
+Script to generate figure 2 from Anslow+ 2025 (MNRAS, subm.)
+"""
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
-import cmcrameri.cm as cm
 from atmosentry.meteoroid import Meteoroid
 from atmosentry import Simulation
 
@@ -97,9 +101,9 @@ if len(sim.fragments):
         elif counter == 1:
             ax.plot(vel / 1e3, fragment.state.z / 1e3, color='tab:red', alpha=1)
         elif counter == 2:
-            ax.plot(vel / 1e3, fragment.state.z / 1e3, color='#2CA083') # green
+            ax.plot(vel / 1e3, fragment.state.z / 1e3, color='#2CA083')
         elif counter == 3:
-            ax.plot(vel / 1e3, fragment.state.z / 1e3, color='#83A02C')# green
+            ax.plot(vel / 1e3, fragment.state.z / 1e3, color='#83A02C')
         elif counter == 4:
             ax.plot(vel / 1e3, fragment.state.z / 1e3, color='#D67D26')
         elif counter == 5:
@@ -130,9 +134,9 @@ if len(sim.fragments):
         elif counter == 1:
             cax.plot(fragment.state.mass / M0, fragment.state.z / 1e3, color='tab:red', alpha=1)
         elif counter == 2:
-            cax.plot(fragment.state.mass / M0, fragment.state.z / 1e3, color='#2CA083') # green
+            cax.plot(fragment.state.mass / M0, fragment.state.z / 1e3, color='#2CA083')
         elif counter == 3:
-            cax.plot(fragment.state.mass / M0, fragment.state.z / 1e3, color='#83A02C')# green
+            cax.plot(fragment.state.mass / M0, fragment.state.z / 1e3, color='#83A02C')
         elif counter == 4:
             cax.plot(fragment.state.mass / M0, fragment.state.z / 1e3, color='#D67D26')
         elif counter == 5:
@@ -142,7 +146,8 @@ if len(sim.fragments):
 
         if fragment.state.z[-1] > 1:
             if fragment.children:
-                cax.plot(fragment.state.mass[-1] / M0, fragment.state.z[-1] / 1e3, 'x', c='k', alpha=0.5)
+                cax.plot(fragment.state.mass[-1] / M0, fragment.state.z[-1] / 1e3, 'x',
+                         c='k', alpha=0.5)
 
 cax.set_xlim(0, 1)
 
@@ -160,6 +165,6 @@ cax.minorticks_on()
 
 plt.tight_layout()
 
-# plt.savefig('./paper/figures/zoom_in_panel.pdf', format='pdf')
+# plt.savefig('./paper_figures/figures/zoom_in_panel.pdf', format='pdf')
 
 plt.show()

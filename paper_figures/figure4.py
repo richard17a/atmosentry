@@ -1,8 +1,13 @@
+# pylint: disable=C0103
+
+"""
+Script to generate figure 4 from Anslow+ 2025 (MNRAS, subm.)
+"""
+
+from multiprocessing import Pool, cpu_count
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-import cmcrameri.cm as cm
-from multiprocessing import Pool, cpu_count
 from atmosentry.meteoroid import Meteoroid
 from atmosentry import Simulation
 
@@ -49,6 +54,9 @@ def set_size(width, fraction=1, subplots=(1, 1)):
 
 
 def compute_impact(params):
+    """
+    Helper method to setup simulation
+    """
 
     rho_com, theta0, rad, v0 = params
     M0 = rho_com * (4 * np.pi / 3) * (rad ** 3)
@@ -96,6 +104,9 @@ def compute_impact(params):
 
 
 def main():
+    """
+    main plotting method
+    """
 
     fig_width, fig_height = set_size('thesis')
 
@@ -116,7 +127,7 @@ def main():
     m_imp = np.zeros_like(r_grid)
 
     for idx, (vel_ratio, mass_ratio) in enumerate(results):
-        
+
         i = idx // len(vels)
         j = idx % len(vels)
 
@@ -125,7 +136,9 @@ def main():
 
     fig, axs = plt.subplots(1, 2, figsize=(1.25 * fig_width, fig_height), constrained_layout=True)
 
-    sc1 = axs[0].scatter(r_grid / 1e3, v_grid / 1e3, c=v_imp, cmap=cm.oslo_r, norm=matplotlib.colors.LogNorm(vmin=1e-3, vmax=1), rasterized=True)
+    sc1 = axs[0].scatter(r_grid / 1e3, v_grid / 1e3, c=v_imp,
+                         cmap='coolwarm', norm=matplotlib.colors.LogNorm(vmin=1e-3, vmax=1),
+                         rasterized=True)
 
     axs[0].set_xscale('log')
 
@@ -138,11 +151,13 @@ def main():
     axs[0].set_xlabel('Initial radius [km]', fontsize=13)
     axs[0].set_ylabel('Initial velocity [km/s]', fontsize=13)
 
-    cbar1 = fig.colorbar(sc1, ax=axs[0], orientation='horizontal', pad=0.05, location='top', norm=matplotlib.colors.LogNorm(vmin=1e-3, vmax=1), extend='min')
+    cbar1 = fig.colorbar(sc1, ax=axs[0], orientation='horizontal', pad=0.05,
+                         location='top', norm=matplotlib.colors.LogNorm(vmin=1e-3, vmax=1),
+                         extend='min')
     cbar1.set_label(r'$v_{\rm surf}/v_{\rm init}$', fontsize=13)
-    # cbar1.ax.xaxis.set_minor_locator(matplotlib.ticker.AutoMinorLocator())
 
-    sc2 = axs[1].scatter(r_grid / 1e3, v_grid / 1e3, c=m_imp, cmap=cm.oslo_r, norm=matplotlib.colors.LogNorm(vmin=1e-2, vmax=1), rasterized=True)
+    sc2 = axs[1].scatter(r_grid / 1e3, v_grid / 1e3, c=m_imp, cmap='coolwarm',
+                         norm=matplotlib.colors.LogNorm(vmin=1e-2, vmax=1), rasterized=True)
 
     axs[1].set_xscale('log')
 
@@ -157,14 +172,14 @@ def main():
 
     axs[1].set_xlabel('Initial radius [km]', fontsize=13)
 
-    cbar2 = fig.colorbar(sc2, ax=axs[1], orientation='horizontal', pad=0.05, location='top', norm=matplotlib.colors.LogNorm(vmin=1e-2, vmax=1), extend='min')
+    cbar2 = fig.colorbar(sc2, ax=axs[1], orientation='horizontal', pad=0.05, location='top',
+                         norm=matplotlib.colors.LogNorm(vmin=1e-2, vmax=1), extend='min')
     cbar2.set_label(r'$m_{\rm surf}/m_{\rm init}$', fontsize=13)
-    # cbar2.ax.xaxis.set_minor_locator(matplotlib.ticker.AutoMinorLocator())
 
     axs[0].minorticks_on()
     axs[1].minorticks_on()
 
-    plt.savefig('./paper/figures/heatmaps.pdf', bbox_inches='tight', format='pdf')
+    plt.savefig('./paper_figures/figures/heatmaps.pdf', bbox_inches='tight', format='pdf')
 
     plt.show()
 
@@ -174,61 +189,9 @@ def main():
         'v_imp': v_imp,
         'm_imp': m_imp
     }
-    np.savez('./paper/figures/heatmap_data.npz', **results)
+    np.savez('./paper_figures/figures/heatmap_data.npz', **results)
 
 
 if __name__ == "__main__":
 
-    # main()
-
-    fig_width, fig_height = set_size('thesis')
-
-    data = np.load('./paper/figures/heatmap_data.npz')
-    v_imp = data['v_imp']
-    m_imp = data['m_imp']
-    v_grid = data['v_grid']
-    r_grid = data['r_grid']
-
-    fig, axs = plt.subplots(1, 2, figsize=(1.25 * fig_width, fig_height), constrained_layout=True)
-
-    sc1 = axs[0].scatter(r_grid / 1e3, v_grid / 1e3, c=v_imp, cmap='coolwarm', norm=matplotlib.colors.LogNorm(vmin=1e-3, vmax=1), rasterized=True)
-    # cmaps = [PuBu, coolwarm, Spectral] (in order)
-
-    axs[0].set_xscale('log')
-
-    axs[0].set_xlim(1e-2, 1e0)
-    axs[0].set_ylim(11.19, 30)
-
-    axs[0].set_xticks([1e-2, 1e-1, 1e0])
-    axs[0].set_xticklabels([0.01, 0.1, 1.0])
-
-    axs[0].set_xlabel('Initial radius [km]', fontsize=13)
-    axs[0].set_ylabel('Initial velocity [km/s]', fontsize=13)
-
-    cbar1 = fig.colorbar(sc1, ax=axs[0], orientation='horizontal', pad=0.05, location='top', norm=matplotlib.colors.LogNorm(vmin=1e-3, vmax=1), extend='min')
-    cbar1.set_label(r'$v_{\rm surf}/v_{\rm init}$', fontsize=13)
-
-    sc2 = axs[1].scatter(r_grid / 1e3, v_grid / 1e3, c=m_imp, cmap='coolwarm', norm=matplotlib.colors.LogNorm(vmin=1e-2, vmax=1), rasterized=True)
-
-    axs[1].set_xscale('log')
-
-    axs[1].set_xlim(1e-2, 1e0)
-    axs[1].set_ylim(11.19, 30)
-
-    axs[1].set_xticks([1e-2, 1e-1, 1e0])
-    axs[1].set_xticklabels([0.01, 0.1, 1.0])
-
-    axs[1].set_yticks([15, 20, 25, 30])
-    axs[1].set_yticklabels([])
-
-    axs[1].set_xlabel('Initial radius [km]', fontsize=13)
-
-    cbar2 = fig.colorbar(sc2, ax=axs[1], orientation='horizontal', pad=0.05, location='top', norm=matplotlib.colors.LogNorm(vmin=1e-2, vmax=1), extend='min')
-    cbar2.set_label(r'$m_{\rm surf}/m_{\rm init}$', fontsize=13)
-
-    axs[0].minorticks_on()
-    axs[1].minorticks_on()
-
-    # plt.savefig('./paper/figures/heatmaps.pdf', bbox_inches='tight', format='pdf')
-
-    plt.show()
+    main()

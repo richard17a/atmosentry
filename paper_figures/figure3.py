@@ -1,14 +1,20 @@
+# pylint: disable=C0103,W0621,C0200,E1101
+
+"""
+Script to generate figure 3 from Anslow+ 2025 (MNRAS, subm.)
+"""
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-import cmcrameri.cm as cm
+from cmcrameri import cm
 from atmosentry.meteoroid import Meteoroid
 from atmosentry import Simulation
-from chyba_model import run_intergration_chyba
 
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
 matplotlib.rcParams['font.family'] = 'STIXGeneral'
+
 
 def set_size(width, fraction=1, subplots=(1, 1)):
     """
@@ -50,9 +56,12 @@ def set_size(width, fraction=1, subplots=(1, 1)):
 
 
 def generate_axes(fig):
-    
+    """
+    Generate axes for multi-panel figure
+    """
+
     gridspec = fig.add_gridspec(nrows=6, ncols=12, height_ratios=[3, 1, 1, 1, 1, 1])
-    
+
     axes = {}
     axes['1'] = fig.add_subplot(gridspec[0:2, 4:8])
     axes['2'] = fig.add_subplot(gridspec[2:4, 3:6])
@@ -68,11 +77,8 @@ rho_com = 0.6e3
 rho_atm0 = 1.225
 
 theta0 = 45. * np.pi / 180.
-# V0 = 20e3
-V0 = 15e3
-
-# R0 = [10, 50, 150, 500, 1000]
-R0 = [100, 500, 1000, 2000, 5000]
+V0 = 20e3
+R0 = [10, 50, 150, 500, 1000]
 
 fig = plt.figure(figsize=(2.5 * fig_width, 2 * fig_height))
 
@@ -83,8 +89,6 @@ ax2 = axes['2']
 ax3 = axes['3']
 ax4 = axes['4']
 ax5 = axes['5']
-
-fig6, ax6 = plt.subplots(1, 1, figsize=(fig_width, fig_height))
 
 for i in range(len(R0)):
 
@@ -105,55 +109,65 @@ for i in range(len(R0)):
 
     sim = Simulation()
 
-    sim.rho0 = 10 * 1.225
+    sim.rho0 = rho_atm0
 
     sim.impactor = impactor
 
     sim.integrate()
 
-    vel = np.sqrt(sim.impactor.state.vx ** 2 + sim.impactor.state.vy ** 2 + sim.impactor.state.vz ** 2)
+    vel = np.sqrt(sim.impactor.state.vx ** 2 +
+                  sim.impactor.state.vy ** 2 +
+                  sim.impactor.state.vz ** 2)
 
-    ax1.plot(vel / 1e3, sim.impactor.state.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=fr'$R_0=$ {R0[i]} m')
-    ax6.plot(vel / 1e3, sim.impactor.state.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=fr'$R_0=$ {R0[i]} m')
+    ax1.plot(vel / 1e3, sim.impactor.state.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)),
+             label=fr'$R_0=$ {R0[i]} m')
+
     if len(sim.fragments):
         ax1.plot(vel[-1] / 1e3, sim.impactor.state.z[-1] / 1e3, 'x', c='k')
-        ax6.plot(vel[-1] / 1e3, sim.impactor.state.z[-1] / 1e3, 'x', c='k', alpha=0.5)
 
         for fragment in sim.fragments:
 
             vel = np.sqrt(fragment.state.vx ** 2 + fragment.state.vy ** 2 + fragment.state.vz ** 2)
 
             ax1.plot(vel / 1e3, fragment.state.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), )
-            ax6.plot(vel / 1e3, fragment.state.z / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), alpha=0.5)
             if fragment.state.z[-1] > 1:
                 if fragment.children:
 
                     ax1.plot(vel[-1] / 1e3, fragment.state.z[-1] / 1e3, 'x', c='k', alpha=0.5)
-                    ax6.plot(vel[-1] / 1e3, fragment.state.z[-1] / 1e3, 'x', c='k', alpha=0.5)
-
-    _, vel_chyba, mass_chyba, _, altitude_chyba, _, _, _ =\
-            run_intergration_chyba(V0, M0, theta0, 100e3, R0[i], 0, 1e4, rho_com, 2.5e6)
-    ax6.plot(vel_chyba / 1e3, altitude_chyba / 1e3, color=cm.bamako((len(R0) - i - 0.5) / len(R0)), ls='--')
 
     if len(sim.fragments):
         fragments_surface = [fragment for fragment in sim.fragments if fragment.state.z[-1] < 1]
         masses = [fragment.state.mass[-1] / M0 for fragment in fragments_surface]
-        vels = [np.sqrt(fragment.state.vx[-1] ** 2 + fragment.state.vy[-1] ** 2 + fragment.state.vz[-1] ** 2) / 1e3 for fragment in fragments_surface]
+        vels = [np.sqrt(fragment.state.vx[-1] ** 2 +
+                        fragment.state.vy[-1] ** 2 +
+                        fragment.state.vz[-1] ** 2) / 1e3 for fragment in fragments_surface]
 
-        ax2.scatter(masses, vels, marker='.', color=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
+        ax2.scatter(masses, vels, marker='.', color=cm.bamako((len(R0) - i) / len(R0)),
+                    label=rf'$R_0=$ {R0[i]} m')
     else:
-        vel = np.sqrt(sim.impactor.state.vx ** 2 + sim.impactor.state.vy ** 2 + sim.impactor.state.vz ** 2)
-        ax2.scatter(sim.impactor.state.mass[-1] / M0, vel[-1] / 1e3, color=cm.bamako((len(R0) - i) / len(R0)), marker='.', label=rf'$R_0=$ {R0[i]} m')
+        vel = np.sqrt(sim.impactor.state.vx ** 2 +
+                      sim.impactor.state.vy ** 2 +
+                      sim.impactor.state.vz ** 2)
+
+        ax2.scatter(sim.impactor.state.mass[-1] / M0, vel[-1] / 1e3,
+                    color=cm.bamako((len(R0) - i) / len(R0)),
+                    marker='.', label=rf'$R_0=$ {R0[i]} m')
 
     if len(sim.fragments):
         fragments_surface = [fragment for fragment in sim.fragments if fragment.state.z[-1] < 1]
         rads = [fragment.state.radius[-1] / R0[i] for fragment in fragments_surface]
-        vels = [np.sqrt(fragment.state.vx[-1] ** 2 + fragment.state.vy[-1] ** 2 + fragment.state.vz[-1] ** 2) / 1e3 for fragment in fragments_surface]
+        vels = [np.sqrt(fragment.state.vx[-1] ** 2 +
+                        fragment.state.vy[-1] ** 2 +
+                        fragment.state.vz[-1] ** 2) / 1e3 for fragment in fragments_surface]
 
         ax3.scatter(rads, vels, marker='.', color=cm.bamako((len(R0) - i) / len(R0)))
     else:
-        vel = np.sqrt(sim.impactor.state.vx ** 2 + sim.impactor.state.vy ** 2 + sim.impactor.state.vz ** 2)
-        ax3.scatter(sim.impactor.state.radius[-1] / R0[i], vel[-1] / 1e3, color=cm.bamako((len(R0) - i) / len(R0)), marker='.')
+        vel = np.sqrt(sim.impactor.state.vx ** 2 +
+                      sim.impactor.state.vy ** 2 +
+                      sim.impactor.state.vz ** 2)
+
+        ax3.scatter(sim.impactor.state.radius[-1] / R0[i], vel[-1] / 1e3,
+                    color=cm.bamako((len(R0) - i) / len(R0)), marker='.')
 
     altitudes = np.linspace(0, 100e3, 1000)
     cumulative_energy_deposition = np.zeros_like(altitudes)
@@ -169,12 +183,14 @@ for i in range(len(R0)):
         for fragment in sim.fragments:
             cumulative_dE += np.sum(fragment.state.dEkin[fragment.state.z >= h])
             cumulative_dM += np.sum(fragment.state.dM[fragment.state.z >= h])
-        
+
         cumulative_energy_deposition[j] = cumulative_dE
         cumulative_mass_deposition[j] = cumulative_dM
 
-    ax4.plot(cumulative_mass_deposition / M0, altitudes / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
-    ax5.plot(cumulative_energy_deposition / KE0, altitudes / 1e3, c=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
+    ax4.plot(cumulative_mass_deposition / M0, altitudes / 1e3,
+             c=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
+    ax5.plot(cumulative_energy_deposition / KE0, altitudes / 1e3,
+             c=cm.bamako((len(R0) - i) / len(R0)), label=rf'$R_0=$ {R0[i]} m')
 
 ax1.set_yscale('log')
 ax1.set_ylim(1e-1, 100)
@@ -184,15 +200,13 @@ ax1.set_ylabel(r'Altitude [km]', fontsize=13)
 ax1.minorticks_on()
 ax1.legend(frameon=False, loc=(0.1, 0.03))
 
-# ax2.axhline(20, c='tab:gray', ls='--', zorder=0, alpha=0.5)
-ax2.axhline(15, c='tab:gray', ls='--', zorder=0, alpha=0.5)
+ax2.axhline(20, c='tab:gray', ls='--', zorder=0, alpha=0.5)
 ax2.axvline(1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
 ax2.set_xlabel(r'Fragment mass $[m_{\rm frag}/M_0]$', fontsize=13)
 ax2.set_ylabel('Velocity [km/s]', fontsize=13)
 ax2.minorticks_on()
 
-# ax3.axhline(20, c='tab:gray', ls='--', zorder=0, alpha=0.5)
-ax3.axhline(15, c='tab:gray', ls='--', zorder=0, alpha=0.5)
+ax3.axhline(20, c='tab:gray', ls='--', zorder=0, alpha=0.5)
 ax3.axvline(1, c='tab:gray', ls='--', zorder=0, alpha=0.5)
 ax3.set_xlabel(r'Fragment radius $[r_{\rm frag}/R_0]$', fontsize=13)
 ax3.set_ylabel('Velocity [km/s]', fontsize=13)
@@ -216,31 +230,14 @@ ax5.set_xlabel(r'Cumulative energy deposition [$E_0$]', fontsize=13)
 ax5.set_ylabel('Altitude [km]', fontsize=13)
 ax5.minorticks_on()
 
-ax6.minorticks_on()
-ax6.set_yscale('log')
-ax6.set_ylim(1e-1, 100)
-ax6.set_yticks([0.1, 1, 10, 100], labels=[0.1, 1, 10, 100])
-ax6.set_xlabel(r'Velocity [km/s]', fontsize=13)
-ax6.set_ylabel(r'Altitude [km]', fontsize=13)
-ax6.legend(frameon=False, loc=(0.1, 0.03))
-
-
 fig.tight_layout()
-fig6.tight_layout()
 
 ttt = ['a', 'b', 'c', 'd', 'e']
 axs = [ax1, ax2, ax3, ax4, ax5]
 for p, l in zip(axs, ttt):
     p.annotate(l, xy=(-0., 1.04), xycoords="axes fraction", fontsize=10, weight='bold')
 
-# with PdfPages('./paper/figures/comet_trajectory_gallery.pdf') as pdf:
-#     pdf.savefig(fig, bbox_inches='tight', )
-
-
-# with PdfPages('./paper/figures/chyba_comparison.pdf') as pdf:
-#     pdf.savefig(fig6, bbox_inches='tight', )
-
-# with PdfPages('./paper/figures/comet_trajectory_gallery10.pdf') as pdf:
-#     pdf.savefig(fig, bbox_inches='tight', )
+with PdfPages('./paper_figures/figures/comet_trajectory_gallery.pdf') as pdf:
+    pdf.savefig(fig, bbox_inches='tight', )
 
 plt.show()
