@@ -8,12 +8,13 @@
 # atmosentry
 
 atmosentry is a numerical integrator that simulates the atmospheric entry of comets. For full description of the numerical model see [this article](https://). 
-Key details are described below, focussing primarily on free model parameters. If you use this model in any 
+Key details are described below, focussing primarily on free model parameters. 
 
 ## Setup
 
 - Clone the Github repository
 - Navigate to the project directory (/atmosentry)
+- Important: Ensure you are using a Python version between 3.8-3.10
 - Install required packages
     - pip3 install -r requirements.txt
 - Install the package
