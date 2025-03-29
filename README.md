@@ -7,13 +7,14 @@
 
 # atmosentry
 
-atmosentry is a numerical integrator that simulates the atmospheric entry of comets. For full description of the numerical model see [this article](https://). 
-Key details are described below, focussing primarily on free model parameters. If you use this model in any 
+atmosentry is a numerical integrator that simulates the atmospheric entry of comets. For full description of the numerical model see [this article](https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staf507/8098221).
+Key details are described below, focussing primarily on free model parameters. 
 
 ## Setup
 
 - Clone the Github repository
 - Navigate to the project directory (/atmosentry)
+- Important: Ensure you are using a Python version between 3.8-3.10
 - Install required packages
     - pip3 install -r requirements.txt
 - Install the package
@@ -29,7 +30,7 @@ The [examples/](./examples/) sub-directory contains several ipython notebooks th
 atmosentry includes specific semi-analytical prescriptions for the ablation, deformation, and fragmentation of comets as they travel through the atmosphere.
 
 
-### atmospheric deceleration
+### Atmospheric deceleration
 
 Assuming the comet arrives at the top of the atmosphere at an initial angle $\theta$ wrt. the local horizontal, and velocity $\mathbf{v}=(v_x,v_y,v_z)$, 
 its deceleration is given by
@@ -47,7 +48,7 @@ As isothermal atmospheric profile is assumed with scale height $H$,
 ```
 where the surface atmospheric density $\rho_{\rm atm, 0}$ is also left as a free parameter.
 
-### mass ablation
+### Mass ablation
 
 Mass loss due to ablation is described by the classical Bronshten (1983) parameterisation,
 ```math
@@ -57,7 +58,7 @@ where $T \simeq 25000\,{\rm K}$ is the temperature of the shocked gas at the lea
 ($C_H$) is left as a free parameter.
 
 
-### deformation
+### Deformation
 
 Given the friable, highly porous nature of cometary impactors, we adopt the progressive fragmentation described in Chyba et al., (1993), 
 in which the comet deforms into a cylinder of height $h=m/(\pi\rho_mr^2)$. Its radius increases according to
@@ -65,7 +66,7 @@ in which the comet deforms into a cylinder of height $h=m/(\pi\rho_mr^2)$. Its r
 r\dfrac{d^2r}{dt^2} = \dfrac{C_D}{2}\left(\dfrac{\rho_{\rm atm}}{\rho_{\rm m}}\right)v^2.
 ```
 
-### fragmentation
+### Fragmentation
 
 This deformation will not continue indefinitely, with 3D simulations demonstrating that Rayleigh-Taylor instabilities drive the fragmentation of the comet.
 Comets break-up after $N_{\rm RT}$ Rayleigh-Taylor growth timescales, which is left as a free parameter in the model. The number of fragments ($n$) produced
