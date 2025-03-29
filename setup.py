@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='atmosentry',
-    version='0.0.2',
+    version='0.0.3',
     author='Richard Anslow',
     author_email='r.anslow@outlook.com',
     url='httpe://github.com/richard17a/overlap',
