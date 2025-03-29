@@ -7,7 +7,7 @@
 
 # atmosentry
 
-atmosentry is a numerical integrator that simulates the atmospheric entry of comets. For full description of the numerical model see [this article](https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staf507/8098221). Please cite this article if you end up using 
+atmosentry is a numerical integrator that simulates the atmospheric entry of comets. For full description of the numerical model see [this article](https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staf507/8098221).
 Key details are described below, focussing primarily on free model parameters. 
 
 ## Setup
