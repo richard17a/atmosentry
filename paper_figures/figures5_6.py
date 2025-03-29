@@ -192,8 +192,8 @@ def main_angle():
 
     plt.minorticks_on()
 
-    plt.savefig('./paper/figures/minimum_cometary_diameter_angles.pdf',
-                format='pdf', bbox_inches='tight')
+    # plt.savefig('./paper/figures/minimum_cometary_diameter_angles.pdf',
+    #             format='pdf', bbox_inches='tight')
 
     plt.show()
 
