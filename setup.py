@@ -3,7 +3,7 @@ Setup script for the atmosentry package.
 
 Package Information:
 - Name: atmosentry
-- Version: 0.0.6
+- Version: 0.0.7
 - Author: Richard Anslow
 - License: MIT License
 - Description: Atmospheric entry simulation (atmosentry)
@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='atmosentry',
-    version='0.0.6',
+    version='0.0.7',
     author='Richard Anslow',
     author_email='r.anslow@outlook.com',
     url='httpe://github.com/richard17a/overlap',
