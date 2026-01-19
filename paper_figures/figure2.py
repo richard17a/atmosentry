@@ -165,6 +165,6 @@ cax.minorticks_on()
 
 plt.tight_layout()
 
-# plt.savefig('./paper_figures/figures/zoom_in_panel.pdf', format='pdf')
+plt.savefig('./paper_figures/figures/zoom_in_panel.pdf', format='pdf')
 
 plt.show()
