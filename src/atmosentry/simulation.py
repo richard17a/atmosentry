@@ -437,7 +437,7 @@ class Simulation():
 
                     for fragment in child_fragments:
                         print(f'R_0={self._impactor.radius}m, N_frags={len(child_fragments)}',\
-                              end='\r', flush=True)
+                              end='\n', flush=True)
 
                         t_f, mass_f, radius_f, dM_f, dEkin_f, x_f, y_f, z_f, vx_f, vy_f, vz_f, _ =\
                             run(fragment,

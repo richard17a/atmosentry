@@ -238,6 +238,6 @@ for p, l in zip(axs, ttt):
     p.annotate(l, xy=(-0., 1.04), xycoords="axes fraction", fontsize=10, weight='bold')
 
 with PdfPages('./paper_figures/figures/comet_trajectory_gallery.pdf') as pdf:
-    pdf.savefig(fig, bbox_inches='tight', )
+    pdf.savefig(fig, bbox_inches='tight', transparent=True)
 
 plt.show()
