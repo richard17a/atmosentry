@@ -1,4 +1,4 @@
-# pylint: disable=C0103
+# pylint: disable=C0103,E0611
 
 """
 This module contains the integrator used to simulate the atmospheric trajectory of a meteoroid 
@@ -153,7 +153,7 @@ def event_mass_zero(t: float, y: list, mass_cutoff: float):
     """
     del t
 
-    return y[3]-mass_cutoff
+    return y[3] - mass_cutoff
 
 
 def event_N_crit(t: float, y: list, N_c: float):

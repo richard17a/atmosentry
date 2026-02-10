@@ -46,7 +46,8 @@ class Simulation():
             Nfrag (int): Number of child meteoroids per fragmentation (default: 2).
             fragments_track (bool): Fragment tracking during the simulation (default: True)
             dt (float): Simulation (maximum) timestep [s] (default: 1e-2)
-            mass_cutoff (float): Simulation minimal mass [kg] below or equal to which the meteroid is considered fully ablated (default: 0)
+            mass_cutoff (float): Simulation minimal mass [kg] below or equal to which the 
+                                 meteroid is considered fully ablated (default: 0)
             impactor (Meteoroid, optional): The meteoroid object to simulate. 
                                             (If not provided, the simulation starts empty.)
         """
@@ -365,18 +366,20 @@ class Simulation():
         
         Returns:
         --------
-            float: The simulation mass below or equal to which the meteroid is considered fully ablated.
+            float: The simulation mass below or equal to which the meteroid is considered 
+                    fully ablated.
         """
         return self._mass_cutoff
 
-    @dt.setter
+    @mass_cutoff.setter
     def mass_cutoff(self, mass_cutoff):
         """
         Setter for the mass below or equal to which the meteroid is considered fully ablated.
         
         Args:
         -----
-            mass_cutoff (float): The simulation mass below or equal to which the meteroid is considered fully ablated.
+            mass_cutoff (float): The simulation mass below or equal to which the meteroid is 
+                                considered fully ablated.
         
         Raises:
         -------
