@@ -131,10 +131,10 @@ def event_Z_crossing(t: float, y: list):
     return y[6]
 
 
-def event_mass_zero(t: float, y: list):
+def event_mass_zero(t: float, y: list, mass_cutoff: float):
     """
-    Event triggered, stopping the integration, when the meteoroid has lost all of its
-    mass due to ablation.
+    Event triggered, stopping the integration, when the meteoroid has lost all
+    but mass_cutoff of its mass due to ablation.
 
     Parameters:
     ----------
@@ -142,16 +142,18 @@ def event_mass_zero(t: float, y: list):
         Simulation time (unused but required by scipy.integrate.solve_ivp)
     y : list
         The current state variables
+    mass_cutoff : float
+        The mass below or equal to which the meteroid is considered fully ablated (default: 0).
 
     Returns:
     -------
     float
-        The current mass (M), which will trigger the event when it reaches zero.
-
+        The current mass (M), which will trigger the event when it the minimal
+        mass below or equal to which the meteroid is considered fully ablated.
     """
     del t
 
-    return y[3]
+    return y[3]-mass_cutoff
 
 
 def event_N_crit(t: float, y: list, N_c: float):
@@ -188,12 +190,13 @@ def run(impactor: Meteoroid,
         rho_atm0: float,
         H: float,
         dt: float,
+        mass_cutoff: float,
         N_c=2.):
     """
     Runs the numerical integration to calculate the meteoroid's atmospheric trajectory,
     stopping the simulation based on predefined events, which include:
     - reaching the ground (altitude = 0)
-    - total mass ablation (mass = 0)
+    - total mass ablation (mass = mass_cutoff)
     - the onset of fragmentation (following N_rt = N_c Rayleigh-Taylor timescales)
 
     Parameters:
@@ -214,6 +217,8 @@ def run(impactor: Meteoroid,
         Atmospheric scale height [m]
     dt : float
         Simulation (maximum) timestep [s]
+    mass_cutoff : float
+    	Simulation minimal mass [kg] below or equal to which the meteroid is considered fully ablated
     N_c : float, optional
         The critical number of Rayleigh-Taylor growth timescale (default: 2)
 
@@ -251,17 +256,25 @@ def run(impactor: Meteoroid,
 
         return event_N_crit(t, y, N_c)
 
+    def event_mass_zero_with_mass_cutoff(t: float, y: list):
+        """
+        Event triggered, stopping the integration, when the meteoroid has lost all
+        but mass_cutoff of its mass due to ablation.
+        """
+
+        return event_mass_zero(t, y, mass_cutoff)
+
     event_Z_crossing.terminal = True
     event_Z_crossing.direction = -1
 
-    event_mass_zero.terminal = True
-    event_mass_zero.direction = -1
+    event_mass_zero_with_mass_cutoff.terminal = True
+    event_mass_zero_with_mass_cutoff.direction = -1
 
     event_N_crit_with_Nc.terminal = True
     event_N_crit_with_Nc.direction = -1
 
     # these events terminate the integration
-    events = [event_Z_crossing, event_mass_zero, event_N_crit_with_Nc]
+    events = [event_Z_crossing, event_mass_zero_with_mass_cutoff, event_N_crit_with_Nc]
 
     x0, y0, z0 = impactor.x, impactor.y, impactor.z
     vx0, vy0, vz0 = impactor.vx, impactor.vy, impactor.vz
