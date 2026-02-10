@@ -27,7 +27,8 @@ class Simulation():
                  H=7.2e3,
                  Nfrag=2,
                  fragments_track=True,
-                 dt=1e-2
+                 dt=1e-2,
+                 mass_cutoff=0.
                  ):
         """
         Initializes a new atmospheric entry simulation instance.
@@ -45,6 +46,8 @@ class Simulation():
             Nfrag (int): Number of child meteoroids per fragmentation (default: 2).
             fragments_track (bool): Fragment tracking during the simulation (default: True)
             dt (float): Simulation (maximum) timestep [s] (default: 1e-2)
+            mass_cutoff (float): Simulation minimal mass [kg] below or equal to which the 
+                                 meteroid is considered fully ablated (default: 0)
             impactor (Meteoroid, optional): The meteoroid object to simulate. 
                                             (If not provided, the simulation starts empty.)
         """
@@ -60,6 +63,7 @@ class Simulation():
         self.Nfrag = Nfrag
         self.fragments_track = fragments_track
         self.dt = dt
+        self.mass_cutoff = mass_cutoff
 
     @property
     def t(self):
@@ -356,6 +360,37 @@ class Simulation():
             self._dt = dt
 
     @property
+    def mass_cutoff(self):
+        """
+        Getter for the mass below or equal to which the meteroid is considered fully ablated.
+        
+        Returns:
+        --------
+            float: The simulation mass below or equal to which the meteroid is considered 
+                    fully ablated.
+        """
+        return self._mass_cutoff
+
+    @mass_cutoff.setter
+    def mass_cutoff(self, mass_cutoff):
+        """
+        Setter for the mass below or equal to which the meteroid is considered fully ablated.
+        
+        Args:
+        -----
+            mass_cutoff (float): The simulation mass below or equal to which the meteroid is 
+                                considered fully ablated.
+        
+        Raises:
+        -------
+            TypeError: If mass_cutoff is not a float.
+        """
+        if not isinstance(mass_cutoff, float):
+            raise TypeError("Simulation mass cutoff must be a float.")
+        if isinstance(mass_cutoff, float):
+            self._mass_cutoff = mass_cutoff
+
+    @property
     def impactor(self):
         """
         Getter for the impactor object.
@@ -419,6 +454,7 @@ class Simulation():
                         self._rho0,
                         self._H,
                         self._dt,
+                        self._mass_cutoff,
                         N_c=2.,
             )
 
@@ -448,6 +484,7 @@ class Simulation():
                                 self._rho0,
                                 self._H,
                                 self._dt,
+                                self._mass_cutoff,
                                 N_c=2.
                             )
 
