@@ -12,6 +12,10 @@ Key details are described below, focussing primarily on free model parameters.
 
 ## Setup
 
+atmosentry is now published on pypi and can therefore be installed simply as:
+- pip install atmosentry
+
+Alternatively (for developing atmosentry):
 - Clone the Github repository
 - Navigate to the project directory (/atmosentry)
 - Important: Ensure you are using a Python version between 3.8-3.10
